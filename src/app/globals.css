@@ -2,26 +2,105 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Cream background #FDF6E9 */
+    --background: 39 77% 96%;
+    /* Slate foncé foreground #131924 */
+    --foreground: 220 31% 11%;
+
+    --card: 39 77% 97%;
+    --card-foreground: 220 31% 11%;
+
+    --popover: 39 77% 97%;
+    --popover-foreground: 220 31% 11%;
+
+    /* Terracotta primary #D95D39 */
+    --primary: 14 68% 54%;
+    --primary-foreground: 39 77% 98%;
+
+    /* Secondary: a muted warm peach/sand #F3DEC2 */
+    --secondary: 35 63% 86%;
+    --secondary-foreground: 14 68% 30%;
+
+    /* Muted: neutral warm sand */
+    --muted: 35 30% 90%;
+    --muted-foreground: 220 15% 40%;
+
+    /* Accent: soft terracotta tint */
+    --accent: 14 50% 92%;
+    --accent-foreground: 14 68% 45%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 35 30% 84%;
+    --input: 35 30% 84%;
+    --ring: 14 68% 54%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Dark Slate background #131924 */
+    --background: 220 31% 11%;
+    /* Cream foreground #FDF6E9 */
+    --foreground: 39 77% 96%;
+
+    --card: 220 31% 14%;
+    --card-foreground: 39 77% 96%;
+
+    --popover: 220 31% 14%;
+    --popover-foreground: 39 77% 96%;
+
+    /* Lighter Terracotta primary for dark contrast #E68867 */
+    --primary: 15 73% 65%;
+    --primary-foreground: 220 31% 11%;
+
+    --secondary: 220 20% 20%;
+    --secondary-foreground: 39 77% 96%;
+
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 15% 65%;
+
+    --accent: 15 40% 20%;
+    --accent-foreground: 15 73% 65%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 15 73% 65%;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Organic shapes, gradients, and backgrounds */
+.bg-warm-gradient {
+  background: radial-gradient(circle at 10% 20%, rgba(243, 222, 194, 0.4) 0%, rgba(253, 246, 233, 1) 90%);
+}
+
+.dark .bg-warm-gradient {
+  background: radial-gradient(circle at 10% 20%, rgba(21, 28, 41, 1) 0%, rgba(19, 25, 36, 1) 90%);
+}
+
+.organic-shape-1 {
+  border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+}
+
+.organic-shape-2 {
+  border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
+}
+
+.organic-shape-3 {
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
 }
