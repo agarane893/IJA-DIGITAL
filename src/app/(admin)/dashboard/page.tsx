@@ -71,8 +71,8 @@ export default function AdminDashboardPage() {
       up: true,
       icon: <TrendingUp className="w-5 h-5" />,
       sub: "depuis hier",
-      color: "text-[#D95D39]",
-      glow: "shadow-[#D95D39]/20",
+      color: "text-zen-500",
+      glow: "shadow-zen-500/20",
     },
     {
       label: "Commandes",
@@ -152,7 +152,7 @@ export default function AdminDashboardPage() {
               onClick={() => setTimeRange(r)}
               className={`rounded-xl h-9 px-4 text-xs font-bold transition-all ${
                 timeRange === r
-                  ? "bg-[#D95D39] text-white shadow-lg shadow-[#D95D39]/25"
+                  ? "bg-zen-500 text-white shadow-lg shadow-zen-500/25"
                   : "bg-white/5 border border-white/8 text-white/50 hover:text-white hover:bg-white/10"
               }`}
             >
@@ -167,7 +167,7 @@ export default function AdminDashboardPage() {
         {stats.map((stat, i) => (
           <div
             key={i}
-            className={`bg-[#161B22] border border-white/6 rounded-2xl p-5 relative overflow-hidden group hover:border-white/12 transition-all shadow-lg ${stat.glow}`}
+            className={`bg-zen-800 border border-white/6 rounded-2xl p-5 relative overflow-hidden group hover:border-white/12 transition-all shadow-lg ${stat.glow}`}
           >
             <div className="flex items-start justify-between mb-3">
               <div className={`w-10 h-10 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center ${stat.color}`}>
@@ -200,7 +200,7 @@ export default function AdminDashboardPage() {
       {/* Charts + Orders */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Revenue Chart */}
-        <div className="bg-[#161B22] border border-white/6 rounded-2xl p-6 lg:col-span-2">
+        <div className="bg-zen-800 border border-white/6 rounded-2xl p-6 lg:col-span-2">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="font-heading text-lg font-bold text-white">
@@ -210,7 +210,7 @@ export default function AdminDashboardPage() {
                 Chiffre d&apos;affaires — {timeRange.toLowerCase()} (en TND)
               </p>
             </div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-[#D95D39] bg-[#D95D39]/10 px-3 py-1.5 rounded-xl border border-[#D95D39]/20">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-zen-500 bg-zen-500/10 px-3 py-1.5 rounded-xl border border-zen-500/20">
               Performance Max
               <ArrowUpRight className="w-3.5 h-3.5" />
             </div>
@@ -252,7 +252,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Recent Orders */}
-        <div className="bg-[#161B22] border border-white/6 rounded-2xl p-5">
+        <div className="bg-zen-800 border border-white/6 rounded-2xl p-5">
           <h2 className="font-heading text-lg font-bold text-white mb-1">
             Commandes en cours
           </h2>
@@ -264,12 +264,12 @@ export default function AdminDashboardPage() {
                 key={order.id}
                 className={`p-3 border rounded-xl hover:border-white/10 hover:bg-white/5 transition-all ${
                   order.status === "Nouveau" 
-                    ? "bg-[#D95D39]/5 border-[#D95D39]/20" 
+                    ? "bg-zen-500/5 border-zen-500/20" 
                     : "bg-white/3 border-white/5"
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-[#D95D39]">{order.id}</span>
+                  <span className="text-xs font-bold text-zen-500">{order.id}</span>
                   <span className="text-[10px] text-white/25">{order.time}</span>
                 </div>
                 <div className="flex items-center justify-between mb-1">

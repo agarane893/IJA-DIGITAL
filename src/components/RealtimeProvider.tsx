@@ -42,9 +42,9 @@ export const RealtimeProvider = ({ children }: { children: React.ReactNode }) =>
 
           // Show pulsing toast notification
           toast.custom((t) => (
-            <div className="bg-[#131924] border border-[#D95D39] rounded-2xl p-4 shadow-2xl flex items-start gap-4 min-w-[300px] animate-in slide-in-from-right-8 fade-in">
-              <div className="w-10 h-10 rounded-full bg-[#D95D39]/20 flex items-center justify-center text-[#D95D39] shrink-0 relative">
-                <span className="absolute inset-0 rounded-full border-2 border-[#D95D39] animate-ping opacity-75"></span>
+            <div className="bg-zen-900 border border-zen-500 rounded-2xl p-4 shadow-2xl flex items-start gap-4 min-w-[300px] animate-in slide-in-from-right-8 fade-in">
+              <div className="w-10 h-10 rounded-full bg-zen-500/20 flex items-center justify-center text-zen-500 shrink-0 relative">
+                <span className="absolute inset-0 rounded-full border-2 border-zen-500 animate-ping opacity-75"></span>
                 <BellRing className="w-5 h-5 relative z-10" />
               </div>
               <div className="flex-1">
@@ -53,7 +53,7 @@ export const RealtimeProvider = ({ children }: { children: React.ReactNode }) =>
                   Table {newOrder.tableId} • {newOrder.items.length} article(s)
                 </p>
                 <div className="mt-3 flex items-center gap-2">
-                  <span className="bg-[#D95D39] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">
+                  <span className="bg-zen-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">
                     {newOrder.id}
                   </span>
                   <span className="font-black text-white text-sm ml-auto">

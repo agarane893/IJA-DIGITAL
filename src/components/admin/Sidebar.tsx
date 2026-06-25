@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   ShoppingCart,
-  ChefHat,
-  Truck,
   Package,
   Users,
   MenuSquare,
@@ -18,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   UtensilsCrossed,
+  QrCode,
 } from "lucide-react";
 import { useAuthStore } from "@/lib/useAuthStore";
 import { Permission, ROLE_LABELS, ROLE_COLORS, hasPermission } from "@/lib/auth";
@@ -35,69 +34,62 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Dashboard",
     href: "/dashboard",
-    icon: <LayoutDashboard className="w-5 h-5" />,
+    icon: <LayoutDashboard className="w-6 h-6" />,
     permission: "dashboard",
   },
   {
     label: "Stats Globales",
     href: "/global",
-    icon: <Globe className="w-5 h-5" />,
+    icon: <Globe className="w-6 h-6" />,
     permission: "global_stats",
   },
   {
-    label: "Caisse POS",
+    label: "Mes Tables",
     href: "/pos",
-    icon: <ShoppingCart className="w-5 h-5" />,
+    icon: <ShoppingCart className="w-6 h-6" />,
+    permission: "pos",
+  },
+  {
+    label: "Gestion Tables",
+    href: "/tables",
+    icon: <QrCode className="w-6 h-6" />,
     permission: "pos",
   },
   {
     label: "Commandes",
     href: "/orders",
-    icon: <UtensilsCrossed className="w-5 h-5" />,
+    icon: <UtensilsCrossed className="w-6 h-6" />,
     permission: "orders",
     badge: "5",
   },
   {
-    label: "Préparation",
-    href: "/kitchen",
-    icon: <ChefHat className="w-5 h-5" />,
-    permission: "kitchen",
-    badge: "3",
-  },
-  {
-    label: "Menu & Produits",
+    label: "Gestion Menu",
     href: "/menu",
-    icon: <MenuSquare className="w-5 h-5" />,
+    icon: <MenuSquare className="w-6 h-6" />,
     permission: "menu",
-  },
-  {
-    label: "Livraisons",
-    href: "/delivery",
-    icon: <Truck className="w-5 h-5" />,
-    permission: "delivery",
   },
   {
     label: "Stocks",
     href: "/stocks",
-    icon: <Package className="w-5 h-5" />,
+    icon: <Package className="w-6 h-6" />,
     permission: "stocks",
   },
   {
-    label: "RH & Personnel",
+    label: "Équipe",
     href: "/rh",
-    icon: <Users className="w-5 h-5" />,
+    icon: <Users className="w-6 h-6" />,
     permission: "rh",
   },
   {
     label: "Rapports",
     href: "/reports",
-    icon: <BarChart3 className="w-5 h-5" />,
+    icon: <BarChart3 className="w-6 h-6" />,
     permission: "reports",
   },
   {
     label: "Paramètres",
     href: "/settings",
-    icon: <Settings className="w-5 h-5" />,
+    icon: <Settings className="w-6 h-6" />,
     permission: "settings",
   },
 ];
@@ -133,16 +125,16 @@ export function AdminSidebar() {
       </AnimatePresence>
 
       <motion.aside
-        animate={{ width: sidebarCollapsed ? 72 : 260 }}
+        animate={{ width: sidebarCollapsed ? 80 : 280 }}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         className={cn(
           "fixed left-0 top-0 h-full z-40 flex flex-col",
-          "bg-[#0D1117] border-r border-white/6",
+          "bg-zen-900/90 backdrop-blur-xl border-r border-white/5",
           "shadow-2xl"
         )}
       >
         {/* Logo header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-white/6 shrink-0">
+        <div className="h-20 flex items-center justify-between px-5 border-b border-white/5 shrink-0">
           <AnimatePresence mode="wait">
             {!sidebarCollapsed ? (
               <motion.div
@@ -151,16 +143,16 @@ export function AdminSidebar() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.2 }}
-                className="flex items-center gap-2.5 overflow-hidden"
+                className="flex items-center gap-3 overflow-hidden"
               >
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D95D39] to-[#E68867] flex items-center justify-center text-white font-black text-lg shadow-lg shadow-[#D95D39]/20 shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-zen-500 to-zen-400 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-zen-500/20 shrink-0">
                   I
                 </div>
                 <div>
-                  <div className="font-heading font-black text-white text-sm leading-tight">
+                  <div className="font-heading font-black text-white text-base leading-tight">
                     Ija Digital
                   </div>
-                  <div className="text-[10px] text-[#D95D39] font-semibold">
+                  <div className="text-xs text-zen-400 font-semibold">
                     Restaurant OS
                   </div>
                 </div>
@@ -172,7 +164,7 @@ export function AdminSidebar() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.2 }}
-                className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D95D39] to-[#E68867] flex items-center justify-center text-white font-black text-lg shadow-lg mx-auto"
+                className="w-10 h-10 rounded-xl bg-gradient-to-br from-zen-500 to-zen-400 flex items-center justify-center text-white font-black text-xl shadow-lg mx-auto"
               >
                 I
               </motion.div>
@@ -182,9 +174,9 @@ export function AdminSidebar() {
           {!sidebarCollapsed && (
             <button
               onClick={toggleSidebar}
-              className="w-7 h-7 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all shrink-0"
+              className="w-10 h-10 min-w-[40px] rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all shrink-0"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
           )}
         </div>
@@ -193,24 +185,24 @@ export function AdminSidebar() {
         {sidebarCollapsed && (
           <button
             onClick={toggleSidebar}
-            className="mx-auto mt-3 w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
+            className="mx-auto mt-4 w-10 h-10 min-w-[40px] rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         )}
 
         {/* User profile pill */}
         <div
           className={cn(
-            "mx-3 mt-4 mb-2 rounded-xl border p-3 shrink-0",
+            "mx-4 mt-5 mb-3 rounded-xl border p-4 shrink-0",
             roleColors.bg,
             roleColors.border
           )}
         >
-          <div className={cn("flex items-center", sidebarCollapsed ? "justify-center" : "gap-3")}>
+          <div className={cn("flex items-center", sidebarCollapsed ? "justify-center" : "gap-4")}>
             <div
               className={cn(
-                "w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 border",
+                "w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 border",
                 roleColors.bg,
                 roleColors.text,
                 roleColors.border
@@ -226,10 +218,10 @@ export function AdminSidebar() {
                   exit={{ opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <p className="text-xs font-bold text-white leading-tight truncate">
+                  <p className="text-sm font-bold text-white leading-tight truncate">
                     {user.name}
                   </p>
-                  <p className={cn("text-[10px] font-semibold", roleColors.text)}>
+                  <p className={cn("text-xs font-semibold mt-0.5", roleColors.text)}>
                     {ROLE_LABELS[user.role]}
                   </p>
                 </motion.div>
@@ -239,7 +231,7 @@ export function AdminSidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2 space-y-0.5 scrollbar-thin">
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-2 space-y-2 scrollbar-thin">
           {allowedItems.map((item) => {
             const isActive =
               pathname === item.href ||
@@ -249,9 +241,9 @@ export function AdminSidebar() {
               <Link key={item.href} href={item.href}>
                 <div
                   className={cn(
-                    "flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150 cursor-pointer group relative",
+                    "flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-all duration-150 cursor-pointer group relative min-h-[44px]",
                     isActive
-                      ? "bg-[#D95D39]/15 text-[#D95D39] border border-[#D95D39]/20"
+                      ? "bg-zen-500/15 text-zen-400 border border-zen-500/25"
                       : "text-white/50 hover:text-white/90 hover:bg-white/5 border border-transparent"
                   )}
                 >
@@ -259,7 +251,7 @@ export function AdminSidebar() {
                   {isActive && (
                     <motion.div
                       layoutId="activeNav"
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-[#D95D39] rounded-r-full"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-zen-500 rounded-r-full"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -267,8 +259,8 @@ export function AdminSidebar() {
                   <span
                     className={cn(
                       "shrink-0 transition-colors",
-                      sidebarCollapsed ? "mx-auto" : "mr-3",
-                      isActive ? "text-[#D95D39]" : "text-white/40 group-hover:text-white/70"
+                      sidebarCollapsed ? "mx-auto" : "mr-4",
+                      isActive ? "text-zen-400" : "text-white/40 group-hover:text-white/70"
                     )}
                   >
                     {item.icon}
@@ -278,7 +270,7 @@ export function AdminSidebar() {
                     <>
                       <span className="flex-1 truncate">{item.label}</span>
                       {item.badge && (
-                        <span className="ml-auto bg-[#D95D39] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                        <span className="ml-auto bg-zen-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] text-center">
                           {item.badge}
                         </span>
                       )}
@@ -287,10 +279,10 @@ export function AdminSidebar() {
 
                   {/* Tooltip on collapsed */}
                   {sidebarCollapsed && (
-                    <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-[#1C2128] border border-white/10 rounded-lg text-white text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-zen-800 border border-white/10 rounded-lg text-white text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
                       {item.label}
                       {item.badge && (
-                        <span className="ml-1.5 bg-[#D95D39] text-white text-[10px] px-1 rounded-full">
+                        <span className="ml-2 bg-zen-500 text-white text-xs px-1.5 rounded-full">
                           {item.badge}
                         </span>
                       )}
@@ -303,23 +295,23 @@ export function AdminSidebar() {
         </nav>
 
         {/* Logout */}
-        <div className="px-3 py-3 border-t border-white/6 shrink-0">
+        <div className="px-4 py-4 border-t border-white/5 shrink-0">
           <button
             onClick={handleLogout}
             className={cn(
-              "w-full flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-white/40 hover:text-red-400 hover:bg-red-500/8 transition-all border border-transparent hover:border-red-500/15 group"
+              "w-full flex items-center rounded-xl px-4 py-3.5 text-base font-medium text-white/40 hover:text-red-400 hover:bg-red-500/8 transition-all border border-transparent hover:border-red-500/15 group min-h-[44px]"
             )}
           >
             <LogOut
               className={cn(
-                "w-5 h-5 shrink-0 transition-colors",
-                sidebarCollapsed ? "mx-auto" : "mr-3"
+                "w-6 h-6 shrink-0 transition-colors",
+                sidebarCollapsed ? "mx-auto" : "mr-4"
               )}
             />
             {!sidebarCollapsed && <span>Déconnexion</span>}
 
             {sidebarCollapsed && (
-              <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-[#1C2128] border border-white/10 rounded-lg text-white text-xs font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
+              <div className="absolute left-full ml-3 px-3 py-2 bg-zen-800 border border-white/10 rounded-lg text-white text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
                 Déconnexion
               </div>
             )}

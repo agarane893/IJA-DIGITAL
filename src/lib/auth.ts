@@ -4,9 +4,6 @@ export type Permission =
   | "dashboard"
   | "pos"
   | "orders"
-  | "kitchen"
-  | "delivery"
-  | "inventory"
   | "stocks"
   | "staff"
   | "rh"
@@ -19,9 +16,7 @@ export type Permission =
 export type UserRole =
   | "super_admin"
   | "manager"
-  | "cashier"
-  | "chef"
-  | "delivery_driver";
+  | "serveur";
 
 export interface Restaurant {
   id: string;
@@ -39,6 +34,7 @@ export interface AuthUser {
   restaurantId: string | null; // null for super_admin (all restaurants)
   permissions: Permission[];
   initials: string;
+  pin: string;
 }
 
 // ─── Role → Permissions Map ───────────────────────────────────────────────────
@@ -48,9 +44,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     "dashboard",
     "pos",
     "orders",
-    "kitchen",
-    "delivery",
-    "inventory",
     "stocks",
     "staff",
     "rh",
@@ -63,24 +56,17 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   manager: [
     "dashboard",
     "orders",
-    "inventory",
     "stocks",
     "staff",
     "rh",
     "menu",
     "reports",
+    "settings"
   ],
-  cashier: [
+  serveur: [
     "pos",
     "orders",
-  ],
-  chef: [
-    "kitchen",
-    "orders",
-  ],
-  delivery_driver: [
-    "delivery",
-    "orders",
+    "stocks"
   ],
 };
 
@@ -89,25 +75,19 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
 export const ROLE_LABELS: Record<UserRole, string> = {
   super_admin: "Super Admin",
   manager: "Manager",
-  cashier: "Caissier",
-  chef: "Cuisinier",
-  delivery_driver: "Livreur",
+  serveur: "Serveur",
 };
 
 export const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
   super_admin: "Accès complet à tous les restaurants et toutes les données",
-  manager: "Dashboard, stocks, RH et rapports de performance",
-  cashier: "Caisse POS et gestion des commandes",
-  chef: "Vue préparation cuisine en temps réel",
-  delivery_driver: "Gestion et suivi des livraisons",
+  manager: "Vue globale, gestion des stocks et de l'équipe",
+  serveur: "Prise de commande et suivi du service",
 };
 
 export const ROLE_COLORS: Record<UserRole, { bg: string; text: string; border: string }> = {
   super_admin: { bg: "bg-purple-500/15", text: "text-purple-400", border: "border-purple-500/30" },
   manager:     { bg: "bg-blue-500/15",   text: "text-blue-400",   border: "border-blue-500/30" },
-  cashier:     { bg: "bg-emerald-500/15",text: "text-emerald-400",border: "border-emerald-500/30" },
-  chef:        { bg: "bg-amber-500/15",  text: "text-amber-400",  border: "border-amber-500/30" },
-  delivery_driver: { bg: "bg-orange-500/15", text: "text-orange-400", border: "border-orange-500/30" },
+  serveur:     { bg: "bg-emerald-500/15",text: "text-emerald-400",border: "border-emerald-500/30" },
 };
 
 // ─── Demo Restaurants ─────────────────────────────────────────────────────────
@@ -130,6 +110,7 @@ export const DEMO_USERS: AuthUser[] = [
     restaurantId: null,
     permissions: ROLE_PERMISSIONS.super_admin,
     initials: "AZ",
+    pin: "9999",
   },
   {
     id: "u2",
@@ -140,36 +121,18 @@ export const DEMO_USERS: AuthUser[] = [
     restaurantId: "r1",
     permissions: ROLE_PERMISSIONS.manager,
     initials: "MB",
+    pin: "1234",
   },
   {
     id: "u3",
     name: "Karim Tlili",
     email: "karim@ija.digital",
-    role: "cashier",
+    role: "serveur",
     avatar: "KT",
     restaurantId: "r1",
-    permissions: ROLE_PERMISSIONS.cashier,
+    permissions: ROLE_PERMISSIONS.serveur,
     initials: "KT",
-  },
-  {
-    id: "u4",
-    name: "Sonia Hamdi",
-    email: "sonia@ija.digital",
-    role: "chef",
-    avatar: "SH",
-    restaurantId: "r1",
-    permissions: ROLE_PERMISSIONS.chef,
-    initials: "SH",
-  },
-  {
-    id: "u5",
-    name: "Fares Gharbi",
-    email: "fares@ija.digital",
-    role: "delivery_driver",
-    avatar: "FG",
-    restaurantId: "r1",
-    permissions: ROLE_PERMISSIONS.delivery_driver,
-    initials: "FG",
+    pin: "5678",
   },
 ];
 
@@ -184,9 +147,7 @@ export function getDefaultRoute(role: UserRole): string {
   const map: Record<UserRole, string> = {
     super_admin: "/dashboard",
     manager: "/dashboard",
-    cashier: "/pos",
-    chef: "/kitchen",
-    delivery_driver: "/delivery",
+    serveur: "/pos",
   };
   return map[role];
 }

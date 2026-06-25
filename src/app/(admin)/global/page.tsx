@@ -41,7 +41,7 @@ export default function GlobalStatsPage() {
           { label: "Note moyenne", value: "4.6 ★", sub: "tous restos", icon: <Star className="w-5 h-5" />, color: "text-amber-400" },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
-            className="bg-[#161B22] border border-white/6 rounded-2xl p-5">
+            className="bg-zen-800 border border-white/6 rounded-2xl p-5">
             <div className={`w-9 h-9 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center mb-3 ${s.color}`}>
               {s.icon}
             </div>
@@ -53,14 +53,14 @@ export default function GlobalStatsPage() {
       </div>
 
       {/* Comparative chart */}
-      <div className="bg-[#161B22] border border-white/6 rounded-2xl p-6">
+      <div className="bg-zen-800 border border-white/6 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="font-heading text-lg font-bold text-white">Revenus par Restaurant</h2>
             <p className="text-xs text-white/30 mt-0.5">Comparaison hebdomadaire (en TND)</p>
           </div>
           <div className="flex items-center gap-3 text-[11px] font-semibold">
-            <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-[#D95D39]" />Tunis</span>
+            <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-zen-500" />Tunis</span>
             <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-blue-500" />Lac</span>
             <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-purple-500" />Carthage</span>
           </div>
@@ -86,7 +86,7 @@ export default function GlobalStatsPage() {
           const stats = RESTAURANT_STATS.find((s) => s.id === resto.id)!;
           return (
             <motion.div key={resto.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.08 }}
-              className="bg-[#161B22] border border-white/6 rounded-2xl p-5">
+              className="bg-zen-800 border border-white/6 rounded-2xl p-5">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center text-xl">
                   {resto.avatar}

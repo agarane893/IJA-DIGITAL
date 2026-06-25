@@ -44,7 +44,7 @@ export default function SettingsPage() {
       </div>
 
       {SECTIONS.map((section) => (
-        <div key={section.title} className="bg-[#161B22] border border-white/6 rounded-2xl overflow-hidden">
+        <div key={section.title} className="bg-zen-800 border border-white/6 rounded-2xl overflow-hidden">
           <div className="flex items-center gap-2.5 px-5 py-4 border-b border-white/6">
             <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/50">
               {section.icon}
@@ -59,7 +59,7 @@ export default function SettingsPage() {
                 <input
                   type={f.type}
                   defaultValue={f.value}
-                  className="w-full bg-white/5 border border-white/8 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-[#D95D39]/40 focus:bg-white/8 transition-all"
+                  className="w-full bg-white/5 border border-white/8 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-zen-500/40 focus:bg-white/8 transition-all"
                 />
               </div>
             ))}
@@ -69,7 +69,7 @@ export default function SettingsPage() {
                   <p className="text-sm font-bold text-white/80">{t.label}</p>
                   <p className="text-xs text-white/30 mt-0.5">{t.desc}</p>
                 </div>
-                <div className={`w-11 h-6 rounded-full border relative cursor-pointer transition-all ${t.enabled ? "bg-[#D95D39]/70 border-[#D95D39]/40" : "bg-white/8 border-white/10"}`}>
+                <div className={`w-11 h-6 rounded-full border relative cursor-pointer transition-all ${t.enabled ? "bg-zen-500/70 border-zen-500/40" : "bg-white/8 border-white/10"}`}>
                   <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all ${t.enabled ? "left-[calc(100%-22px)]" : "left-0.5"}`} />
                 </div>
               </div>
@@ -78,7 +78,7 @@ export default function SettingsPage() {
 
           {section.fields && (
             <div className="px-5 pb-5">
-              <button className="bg-[#D95D39] text-white font-bold text-xs px-5 py-2.5 rounded-xl hover:bg-[#D95D39]/90 transition-all shadow-md shadow-[#D95D39]/20">
+              <button className="bg-zen-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl hover:bg-zen-500/90 transition-all shadow-md shadow-zen-500/20">
                 Sauvegarder
               </button>
             </div>

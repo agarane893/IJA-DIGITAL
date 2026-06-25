@@ -78,7 +78,7 @@ export function AdminHeader() {
   };
 
   return (
-    <header className="h-16 bg-[#0D1117]/95 backdrop-blur-md border-b border-white/6 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30">
+    <header className="h-16 bg-zen-900/95 backdrop-blur-md border-b border-white/6 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30">
       {/* Left: Hamburger + Title */}
       <div className="flex items-center gap-3">
         <button
@@ -131,7 +131,7 @@ export function AdminHeader() {
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#D95D39] rounded-full text-white text-[9px] font-black flex items-center justify-center border border-[#0D1117]">
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-zen-500 rounded-full text-white text-[9px] font-black flex items-center justify-center border border-[#0D1117]">
                 {unreadCount}
               </span>
             )}
@@ -144,7 +144,7 @@ export function AdminHeader() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.18 }}
-                className="absolute right-0 top-full mt-2 w-80 bg-[#161B22] border border-white/8 rounded-2xl shadow-2xl overflow-hidden z-50"
+                className="absolute right-0 top-full mt-2 w-80 bg-zen-800 border border-white/8 rounded-2xl shadow-2xl overflow-hidden z-50"
               >
                 <div className="flex items-center justify-between px-4 py-3 border-b border-white/6">
                   <span className="text-xs font-bold text-white/60 uppercase tracking-wider">
@@ -155,7 +155,7 @@ export function AdminHeader() {
                       onClick={() => {
                         markNotificationsRead();
                       }}
-                      className="text-[10px] text-[#D95D39] font-bold hover:underline"
+                      className="text-[10px] text-zen-500 font-bold hover:underline"
                     >
                       Tout marquer lu
                     </button>
@@ -186,7 +186,7 @@ export function AdminHeader() {
                         <p className="text-[10px] text-white/25 mt-0.5">{notif.time}</p>
                       </div>
                       {!notif.read && (
-                        <div className="w-2 h-2 rounded-full bg-[#D95D39] mt-1.5 shrink-0" />
+                        <div className="w-2 h-2 rounded-full bg-zen-500 mt-1.5 shrink-0" />
                       )}
                     </div>
                   ))}
@@ -243,7 +243,7 @@ export function AdminHeader() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.18 }}
-                className="absolute right-0 top-full mt-2 w-56 bg-[#161B22] border border-white/8 rounded-2xl shadow-2xl overflow-hidden z-50"
+                className="absolute right-0 top-full mt-2 w-56 bg-zen-800 border border-white/8 rounded-2xl shadow-2xl overflow-hidden z-50"
               >
                 {/* User info */}
                 <div className="px-4 py-3 border-b border-white/6">

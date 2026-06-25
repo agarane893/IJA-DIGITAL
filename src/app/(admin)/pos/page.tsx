@@ -57,20 +57,20 @@ export default function ReceptionPOSPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FDF6E9] text-[#131924] font-sans flex flex-col">
+    <main className="min-h-screen bg-zen-50 text-zen-900 font-sans flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-[#EADCB9] px-6 py-4 flex items-center justify-between shrink-0 sticky top-0 z-20">
+      <header className="bg-white border-b border-zen-200 px-6 py-4 flex items-center justify-between shrink-0 sticky top-0 z-20">
         <div>
-          <h1 className="font-heading font-black text-2xl text-[#131924]">Réception & Caisse</h1>
-          <p className="text-sm font-bold text-[#D95D39]">Gestion des commandes en direct</p>
+          <h1 className="font-heading font-black text-2xl text-zen-900">Réception & Caisse</h1>
+          <p className="text-sm font-bold text-zen-500">Gestion des commandes en direct</p>
         </div>
 
         {/* Filters */}
-        <div className="flex bg-[#FDF6E9] border border-[#EADCB9] p-1 rounded-xl">
+        <div className="flex bg-zen-50 border border-zen-200 p-1 rounded-xl">
           <FilterTab 
             label="Toutes" count={counts.all} 
             active={filter === "all"} onClick={() => setFilter("all")} 
-            color="text-[#131924]" bg="bg-white" 
+            color="text-zen-900" bg="bg-white" 
           />
           <FilterTab 
             label="En attente" count={counts.new} 
@@ -94,7 +94,7 @@ export default function ReceptionPOSPage() {
       {/* Grid view */}
       <div className="flex-1 p-6 overflow-y-auto">
         {visibleOrders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-[#131924]/40 space-y-4">
+          <div className="flex flex-col items-center justify-center h-full text-zen-900/40 space-y-4">
             <Utensils className="w-16 h-16 stroke-[1.5]" />
             <h2 className="text-xl font-bold font-heading">Aucune commande {filter !== 'all' && 'dans cette catégorie'}</h2>
           </div>
@@ -118,7 +118,7 @@ function FilterTab({ label, count, active, onClick, color, bg, pulse }: any) {
       onClick={onClick}
       className={cn(
         "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all relative",
-        active ? `shadow-sm border border-[#EADCB9]/50 ${bg} ${color}` : "text-[#131924]/60 hover:text-[#131924] hover:bg-white/50"
+        active ? `shadow-sm border border-zen-200/50 ${bg} ${color}` : "text-zen-900/60 hover:text-zen-900 hover:bg-white/50"
       )}
     >
       {pulse && !active && (
@@ -127,7 +127,7 @@ function FilterTab({ label, count, active, onClick, color, bg, pulse }: any) {
       {label}
       <span className={cn(
         "px-2 py-0.5 rounded-md text-xs",
-        active ? "bg-white/50" : "bg-[#131924]/5"
+        active ? "bg-white/50" : "bg-zen-900/5"
       )}>
         {count}
       </span>
@@ -188,15 +188,15 @@ function OrderCard({ order, updateOrder }: any) {
         <div className="space-y-3 flex-1 mb-4">
           {order.items.map((item: any) => (
             <div key={item.id} className="flex gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#FDF6E9] flex items-center justify-center shrink-0 border border-[#EADCB9]">
-                <span className="font-bold text-[#D95D39] text-sm">{item.quantity}x</span>
+              <div className="w-8 h-8 rounded-lg bg-zen-50 flex items-center justify-center shrink-0 border border-zen-200">
+                <span className="font-bold text-zen-500 text-sm">{item.quantity}x</span>
               </div>
               <div className="flex-1">
-                <p className="font-bold text-[#131924] text-sm leading-tight">{item.menuItem.name}</p>
+                <p className="font-bold text-zen-900 text-sm leading-tight">{item.menuItem.name}</p>
                 
                 {/* Options */}
                 {Object.keys(item.options).length > 0 && (
-                  <p className="text-xs text-[#131924]/60 font-medium mt-0.5">
+                  <p className="text-xs text-zen-900/60 font-medium mt-0.5">
                     {Object.entries(item.options).map(([k, v]) => `${v}`).join(", ")}
                   </p>
                 )}
@@ -209,7 +209,7 @@ function OrderCard({ order, updateOrder }: any) {
                   </div>
                 )}
               </div>
-              <div className="font-bold text-[#131924] text-sm text-right shrink-0">
+              <div className="font-bold text-zen-900 text-sm text-right shrink-0">
                 {formatPrice(item.totalPrice)}
               </div>
             </div>
@@ -228,14 +228,14 @@ function OrderCard({ order, updateOrder }: any) {
         )}
 
         {/* Footer Summary */}
-        <div className="flex items-center justify-between border-t border-[#EADCB9] pt-4 mb-4">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-[#131924]/60 uppercase">
+        <div className="flex items-center justify-between border-t border-zen-200 pt-4 mb-4">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-zen-900/60 uppercase">
             {order.paymentMethod === "cash" ? <Banknote className="w-4 h-4 text-emerald-500" /> : <CreditCard className="w-4 h-4 text-blue-500" />}
             {order.paymentMethod === "cash" ? "Espèces" : "Carte"}
           </div>
           <div className="text-right">
-            <span className="text-xs font-bold text-[#131924]/50 uppercase mr-2">Total</span>
-            <span className="font-heading font-black text-xl text-[#131924]">{formatPrice(order.total)}</span>
+            <span className="text-xs font-bold text-zen-900/50 uppercase mr-2">Total</span>
+            <span className="font-heading font-black text-xl text-zen-900">{formatPrice(order.total)}</span>
           </div>
         </div>
 

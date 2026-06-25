@@ -38,7 +38,7 @@ export default function ReportsPage() {
             <Calendar className="w-3.5 h-3.5" />
             Période
           </button>
-          <button className="flex items-center gap-2 text-xs font-bold text-[#D95D39] bg-[#D95D39]/10 border border-[#D95D39]/20 hover:bg-[#D95D39]/15 rounded-xl px-3 py-2 transition-all">
+          <button className="flex items-center gap-2 text-xs font-bold text-zen-500 bg-zen-500/10 border border-zen-500/20 hover:bg-zen-500/15 rounded-xl px-3 py-2 transition-all">
             <Download className="w-3.5 h-3.5" />
             Exporter PDF
           </button>
@@ -47,7 +47,7 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue trend */}
-        <div className="bg-[#161B22] border border-white/6 rounded-2xl p-6">
+        <div className="bg-zen-800 border border-white/6 rounded-2xl p-6">
           <h2 className="font-heading text-base font-bold text-white mb-1">Évolution du CA</h2>
           <p className="text-xs text-white/30 mb-5">Chiffre d&apos;affaires mensuel (TND)</p>
           <div className="h-56">
@@ -64,7 +64,7 @@ export default function ReportsPage() {
         </div>
 
         {/* Category pie */}
-        <div className="bg-[#161B22] border border-white/6 rounded-2xl p-6">
+        <div className="bg-zen-800 border border-white/6 rounded-2xl p-6">
           <h2 className="font-heading text-base font-bold text-white mb-1">Ventes par catégorie</h2>
           <p className="text-xs text-white/30 mb-5">Répartition des revenus</p>
           <div className="h-56">
@@ -82,7 +82,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Monthly table */}
-      <div className="bg-[#161B22] border border-white/6 rounded-2xl overflow-hidden">
+      <div className="bg-zen-800 border border-white/6 rounded-2xl overflow-hidden">
         <div className="px-5 py-4 border-b border-white/6">
           <h2 className="font-heading text-base font-bold text-white">Résumé mensuel</h2>
         </div>

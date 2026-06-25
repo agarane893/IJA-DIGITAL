@@ -36,7 +36,7 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-[#161B22] border border-white/10 rounded-2xl p-6 w-full max-w-sm"
+        className="bg-zen-800 border border-white/10 rounded-2xl p-6 w-full max-w-sm"
       >
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-bold text-white">Nouvel employé</h2>
@@ -57,13 +57,13 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
                 placeholder={placeholder}
                 value={form[key as keyof typeof form]}
                 onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#D95D39]/50"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-zen-500/50"
               />
             </div>
           ))}
           <button
             type="submit"
-            className="w-full mt-2 bg-[#D95D39] hover:bg-[#C04D2C] text-white font-bold py-2.5 rounded-xl transition-colors text-sm"
+            className="w-full mt-2 bg-zen-500 hover:bg-[#C04D2C] text-white font-bold py-2.5 rounded-xl transition-colors text-sm"
           >
             Ajouter
           </button>
@@ -96,7 +96,7 @@ export default function RHPage() {
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 bg-[#D95D39] hover:bg-[#C04D2C] text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors"
+          className="flex items-center gap-2 bg-zen-500 hover:bg-[#C04D2C] text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors"
         >
           <Plus className="w-4 h-4" />
           Ajouter
@@ -128,12 +128,12 @@ export default function RHPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.07 }}
-              className="bg-[#161B22] border border-white/6 rounded-2xl p-5 hover:border-white/12 transition-all flex flex-col gap-4"
+              className="bg-zen-800 border border-white/6 rounded-2xl p-5 hover:border-white/12 transition-all flex flex-col gap-4"
             >
               {/* Top row */}
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#D95D39]/15 border border-[#D95D39]/20 flex items-center justify-center font-black text-[#D95D39] text-sm">
+                  <div className="w-10 h-10 rounded-xl bg-zen-500/15 border border-zen-500/20 flex items-center justify-center font-black text-zen-500 text-sm">
                     {emp.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                   </div>
                   <div>

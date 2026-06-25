@@ -4,74 +4,72 @@
 
 @layer base {
   :root {
-    /* Cream background #FDF6E9 */
-    --background: 39 77% 96%;
-    /* Slate foncé foreground #131924 */
-    --foreground: 220 31% 11%;
+    /* Zen Light – Sage Fog background */
+    --background: 120 10% 96%;
+    --foreground: 150 20% 12%;
 
-    --card: 39 77% 97%;
-    --card-foreground: 220 31% 11%;
+    --card: 120 10% 98%;
+    --card-foreground: 150 20% 12%;
 
-    --popover: 39 77% 97%;
-    --popover-foreground: 220 31% 11%;
+    --popover: 120 10% 98%;
+    --popover-foreground: 150 20% 12%;
 
-    /* Terracotta primary #D95D39 */
-    --primary: 14 68% 54%;
-    --primary-foreground: 39 77% 98%;
+    /* Matcha Sage primary */
+    --primary: 115 20% 52%;
+    --primary-foreground: 120 10% 98%;
 
-    /* Secondary: a muted warm peach/sand #F3DEC2 */
-    --secondary: 35 63% 86%;
-    --secondary-foreground: 14 68% 30%;
+    /* Secondary: muted sage tint */
+    --secondary: 120 15% 88%;
+    --secondary-foreground: 115 20% 30%;
 
-    /* Muted: neutral warm sand */
-    --muted: 35 30% 90%;
-    --muted-foreground: 220 15% 40%;
+    /* Muted: neutral sage grey */
+    --muted: 120 10% 91%;
+    --muted-foreground: 120 10% 45%;
 
-    /* Accent: soft terracotta tint */
-    --accent: 14 50% 92%;
-    --accent-foreground: 14 68% 45%;
+    /* Accent: pale sage */
+    --accent: 115 25% 90%;
+    --accent-foreground: 115 20% 40%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 120 10% 98%;
 
-    --border: 35 30% 84%;
-    --input: 35 30% 84%;
-    --ring: 14 68% 54%;
+    --border: 120 12% 82%;
+    --input: 120 12% 82%;
+    --ring: 115 20% 52%;
 
     --radius: 0.75rem;
   }
 
   .dark {
-    /* Dark Slate background #131924 */
-    --background: 220 31% 11%;
-    /* Cream foreground #FDF6E9 */
-    --foreground: 39 77% 96%;
+    /* Zen Dark – Deep Forest */
+    --background: 150 18% 10%;
+    --foreground: 120 10% 92%;
 
-    --card: 220 31% 14%;
-    --card-foreground: 39 77% 96%;
+    --card: 150 18% 13%;
+    --card-foreground: 120 10% 92%;
 
-    --popover: 220 31% 14%;
-    --popover-foreground: 39 77% 96%;
+    --popover: 150 18% 13%;
+    --popover-foreground: 120 10% 92%;
 
-    /* Lighter Terracotta primary for dark contrast #E68867 */
-    --primary: 15 73% 65%;
-    --primary-foreground: 220 31% 11%;
+    /* Matcha Sage – lighter for dark contrast */
+    --primary: 115 22% 58%;
+    --primary-foreground: 150 18% 10%;
 
-    --secondary: 220 20% 20%;
-    --secondary-foreground: 39 77% 96%;
+    --secondary: 150 15% 18%;
+    --secondary-foreground: 120 10% 92%;
 
-    --muted: 220 20% 18%;
-    --muted-foreground: 220 15% 65%;
+    --muted: 150 15% 16%;
+    --muted-foreground: 120 10% 60%;
 
-    --accent: 15 40% 20%;
-    --accent-foreground: 15 73% 65%;
+    --accent: 115 15% 20%;
+    --accent-foreground: 115 22% 58%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 120 10% 98%;
 
-    --border: 220 20% 20%;
-    --input: 220 20% 20%;
-    --ring: 15 73% 65%;
+    --border: 150 15% 18%;
+    --input: 150 15% 18%;
+    --ring: 115 22% 58%;
   }
 }
 
@@ -84,13 +82,13 @@
   }
 }
 
-/* Organic shapes, gradients, and backgrounds */
-.bg-warm-gradient {
-  background: radial-gradient(circle at 10% 20%, rgba(243, 222, 194, 0.4) 0%, rgba(253, 246, 233, 1) 90%);
+/* Zen gradient surfaces */
+.bg-zen-gradient {
+  background: radial-gradient(circle at 20% 30%, rgba(162, 186, 167, 0.25) 0%, rgba(244, 246, 244, 1) 80%);
 }
 
-.dark .bg-warm-gradient {
-  background: radial-gradient(circle at 10% 20%, rgba(21, 28, 41, 1) 0%, rgba(19, 25, 36, 1) 90%);
+.dark .bg-zen-gradient {
+  background: radial-gradient(circle at 20% 30%, rgba(31, 41, 35, 1) 0%, rgba(22, 30, 26, 1) 80%);
 }
 
 .organic-shape-1 {
@@ -104,3 +102,10 @@
 .organic-shape-3 {
   border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
 }
+
+/* Scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 154, 115, 0.3) transparent;
+}
+

@@ -1,13 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export interface Ingredient {
-  id: string;
-  name: string;
-  unit: string;
-  costPerUnit: number;
-}
-
 export interface RecipeItem {
   ingredientId: string;
   quantity: number;
@@ -31,11 +24,11 @@ export interface AdminCategory {
 interface MenuStore {
   categories: AdminCategory[];
   products: AdminProduct[];
-  ingredients: Ingredient[];
   
   addProduct: (p: AdminProduct) => void;
   updateProduct: (id: string, p: Partial<AdminProduct>) => void;
   deleteProduct: (id: string) => void;
+  toggleProductAvailability: (id: string) => void;
   
   addCategory: (c: AdminCategory) => void;
   updateCategory: (id: string, c: Partial<AdminCategory>) => void;
@@ -46,13 +39,6 @@ const DEMO_CATEGORIES: AdminCategory[] = [
   { id: "c1", name: "Boissons" },
   { id: "c2", name: "Plats" },
   { id: "c3", name: "Pâtisseries" }
-];
-
-const DEMO_INGREDIENTS: Ingredient[] = [
-  { id: "i1", name: "Café grain", unit: "kg", costPerUnit: 25 },
-  { id: "i2", name: "Sucre", unit: "kg", costPerUnit: 2 },
-  { id: "i3", name: "Lait", unit: "L", costPerUnit: 1.5 },
-  { id: "i4", name: "Thé vert", unit: "kg", costPerUnit: 18 },
 ];
 
 const DEMO_PRODUCTS: AdminProduct[] = [
@@ -81,7 +67,6 @@ export const useAdminMenuStore = create<MenuStore>()(
     (set) => ({
       categories: DEMO_CATEGORIES,
       products: DEMO_PRODUCTS,
-      ingredients: DEMO_INGREDIENTS,
 
       addProduct: (p) => set((s) => ({ products: [...s.products, p] })),
       updateProduct: (id, updates) => set((s) => ({
@@ -89,6 +74,9 @@ export const useAdminMenuStore = create<MenuStore>()(
       })),
       deleteProduct: (id) => set((s) => ({
         products: s.products.filter(p => p.id !== id)
+      })),
+      toggleProductAvailability: (id) => set((s) => ({
+        products: s.products.map(p => p.id === id ? { ...p, available: !p.available } : p)
       })),
 
       addCategory: (c) => set((s) => ({ categories: [...s.categories, c] })),

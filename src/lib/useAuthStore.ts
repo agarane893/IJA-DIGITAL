@@ -17,7 +17,7 @@ interface AuthState {
   sidebarCollapsed: boolean;
 
   // Actions
-  login: (userId: string) => { success: boolean; redirectTo: string };
+  login: (pin: string) => { success: boolean; redirectTo: string };
   logout: () => void;
   markNotificationsRead: () => void;
   toggleSidebar: () => void;
@@ -63,8 +63,8 @@ export const useAuthStore = create<AuthState>()(
       notifications: DEMO_NOTIFICATIONS,
       sidebarCollapsed: false,
 
-      login: (userId: string) => {
-        const user = DEMO_USERS.find((u) => u.id === userId);
+      login: (pin: string) => {
+        const user = DEMO_USERS.find((u) => u.pin === pin);
         if (!user) return { success: false, redirectTo: "/login" };
 
         set({

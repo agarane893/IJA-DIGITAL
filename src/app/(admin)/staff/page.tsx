@@ -40,10 +40,10 @@ export default function StaffPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {STAFF.map((s, i) => (
           <motion.div key={s.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
-            className="bg-[#161B22] border border-white/6 rounded-2xl p-5 hover:border-white/12 transition-all">
+            className="bg-zen-800 border border-white/6 rounded-2xl p-5 hover:border-white/12 transition-all">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#D95D39]/15 border border-[#D95D39]/20 flex items-center justify-center font-bold text-[#D95D39] text-sm">
+                <div className="w-10 h-10 rounded-xl bg-zen-500/15 border border-zen-500/20 flex items-center justify-center font-bold text-zen-500 text-sm">
                   {s.name.split(" ").map((n) => n[0]).join("")}
                 </div>
                 <div>

@@ -50,6 +50,18 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        zen: {
+          50: '#F4F6F4', // Lightest sage background
+          100: '#E2E8E4', // Borders light
+          200: '#C2D1C5', // Muted borders
+          300: '#A1BAA7',
+          400: '#8FA986', // Light matcha gradient end
+          500: '#7C9A73', // Matcha Green Accent
+          600: '#5C7C63', // Deep Sage
+          700: '#3D5543',
+          800: '#1F2923', // Admin Card / Sidebar
+          900: '#161E1A', // Admin Deep Background
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

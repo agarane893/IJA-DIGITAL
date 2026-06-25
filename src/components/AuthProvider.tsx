@@ -39,9 +39,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Prevent flash of wrong content during hydration
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-[#131924] flex items-center justify-center">
+      <div className="min-h-screen bg-zen-900 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#D95D39] flex items-center justify-center text-white font-bold text-xl shadow-lg animate-pulse">
+          <div className="w-12 h-12 rounded-2xl bg-zen-500 flex items-center justify-center text-white font-bold text-xl shadow-lg animate-pulse">
             I
           </div>
         </div>
