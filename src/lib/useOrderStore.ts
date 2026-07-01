@@ -12,9 +12,10 @@ interface OrderStore {
   updateOrder: (id: string, updates: Partial<PlacedOrder>) => void;
   updateOrderStatus: (id: string, status: PlacedOrder["status"]) => void;
   cancelOrder: (id: string, reason: string, cancelledBy: string) => void;
-  markAsPaid: (id: string, paidBy: string) => void;
+  markAsPaid: (id: string, paidBy: string, paymentMethod?: "cash" | "card") => void;
   clearOrders: () => void;
 }
+
 
 function deductStockForOrder(order: PlacedOrder) {
   const { products } = useAdminMenuStore.getState();
@@ -264,7 +265,7 @@ export const useOrderStore = create<OrderStore>()(
             : o
         ),
       })),
-      markAsPaid: (id, paidBy) => set((state) => ({
+      markAsPaid: (id, paidBy, paymentMethod) => set((state) => ({
         orders: state.orders.map((o) =>
           o.id === id
             ? {
@@ -272,6 +273,7 @@ export const useOrderStore = create<OrderStore>()(
                 paid: true,
                 paidAt: new Date().toISOString(),
                 paidBy,
+                paymentMethod: paymentMethod || o.paymentMethod || "cash",
               }
             : o
         ),

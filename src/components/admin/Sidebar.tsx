@@ -51,12 +51,6 @@ export const NAV_ITEMS: NavItem[] = [
     permission: "pos",
   },
   {
-    label: "All Commands",
-    href: "/pos",
-    icon: <ShoppingCart className="w-6 h-6" />,
-    permission: "pos",
-  },
-  {
     label: "Historique des Commandes",
     href: "/orders",
     icon: <History className="w-6 h-6" />,
