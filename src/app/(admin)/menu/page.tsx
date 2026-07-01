@@ -4,12 +4,15 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAdminMenuStore } from "@/lib/useAdminMenuStore";
 import { useStocksStore } from "@/lib/useStocksStore";
+import { useAuthStore } from "@/lib/useAuthStore";
 import { Plus, Trash2, MenuSquare, CheckCircle2, XCircle, Search, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AdminMenuPage() {
   const { categories, products, addCategory, deleteCategory, addProduct, deleteProduct, toggleProductAvailability } = useAdminMenuStore();
   const { items: stockItems, addStockItem } = useStocksStore();
+  const { user } = useAuthStore();
+  const activeUserName = user ? `${user.name} (${user.role === 'manager' ? 'Manager' : 'Serveur'})` : "Système";
 
   const [newCatName, setNewCatName] = useState("");
   const [activeTab, setActiveTab] = useState<"products" | "categories">("products");
@@ -55,7 +58,7 @@ export default function AdminMenuPage() {
     if (qty <= 0) return;
 
     // 1. Add to global stock
-    const newId = addStockItem(compSearch.trim(), compUnit.trim());
+    const newId = addStockItem(compSearch.trim(), compUnit.trim(), activeUserName);
     
     // 2. Add to local recipe
     setRecipe(prev => [...prev, { ingredientId: newId, quantity: qty, name: compSearch.trim(), unit: compUnit.trim() }]);

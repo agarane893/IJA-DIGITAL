@@ -22,6 +22,14 @@ export interface PlacedOrder {
   status: "new" | "cooking" | "ready" | "delivered" | "rejected";
   estimatedTime?: string;
   createdAt: string;
+  // Payment tracking
+  paid?: boolean;
+  paidAt?: string;
+  paidBy?: string;
+  // Cancellation tracking
+  cancelledBy?: string;
+  cancelledAt?: string;
+  cancelReason?: string;
 }
 
 interface CartState {

@@ -317,55 +317,9 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function OrderDetailModal({ order, onClose, updateOrder }: { order: PlacedOrder, onClose: () => void, updateOrder: (id: string, updates: Partial<PlacedOrder>) => void }) {
+
+
   const handleStatusChange = (newStatus: string) => {
-    if (newStatus === "delivered" && order.status !== "delivered") {
-      const { products } = useAdminMenuStore.getState();
-      const { items: stockItems, deductStock } = useStocksStore.getState();
-      
-      let deductedCount = 0;
-      let lowStockAlerts: string[] = [];
-
-      order.items?.forEach(orderItem => {
-        // Find corresponding product in Admin Menu to get its recipe
-        const adminProduct = products.find(p => p.name.toLowerCase() === orderItem.menuItem?.name?.toLowerCase());
-        
-        if (adminProduct && adminProduct.recipe) {
-          adminProduct.recipe.forEach(recipeItem => {
-            const amountToDeduct = recipeItem.quantity * orderItem.quantity;
-            deductStock(recipeItem.ingredientId, amountToDeduct);
-            deductedCount++;
-            
-            // Check threshold after deduction
-            const updatedStock = useStocksStore.getState().items.find(i => i.id === recipeItem.ingredientId);
-            if (updatedStock) {
-              const remaining = updatedStock.initialStock - updatedStock.usedToday;
-              if (updatedStock.initialStock > 0 && remaining < updatedStock.initialStock * 0.2) {
-                lowStockAlerts.push(`${updatedStock.name} (Reste ${remaining.toFixed(2)}${updatedStock.unit})`);
-              }
-            }
-          });
-        }
-      });
-
-      if (deductedCount > 0) {
-        toast.success(`Commande servie ! Stock mis à jour pour ${deductedCount} composants.`);
-      }
-
-      if (lowStockAlerts.length > 0) {
-        // Keep only unique alerts
-        const uniqueAlerts = Array.from(new Set(lowStockAlerts));
-        toast.warning(
-          <div className="space-y-1">
-            <p className="font-bold">Alerte : Stock Faible !</p>
-            <ul className="text-xs list-disc pl-4">
-              {uniqueAlerts.map(a => <li key={a}>{a}</li>)}
-            </ul>
-          </div>,
-          { duration: 8000 }
-        );
-      }
-    }
-
     updateOrder(order.id, { status: newStatus as any });
     onClose();
   };

@@ -15,6 +15,8 @@ interface AuthState {
   isAuthenticated: boolean;
   notifications: Notification[];
   sidebarCollapsed: boolean;
+  sidebarOrientation: "vertical" | "horizontal";
+  theme: "light" | "dark";
 
   // Actions
   login: (pin: string) => { success: boolean; redirectTo: string };
@@ -22,6 +24,10 @@ interface AuthState {
   markNotificationsRead: () => void;
   toggleSidebar: () => void;
   setSidebarCollapsed: (v: boolean) => void;
+  toggleSidebarOrientation: () => void;
+  setSidebarOrientation: (orientation: "vertical" | "horizontal") => void;
+  toggleTheme: () => void;
+  setTheme: (theme: "light" | "dark") => void;
 }
 
 const DEMO_NOTIFICATIONS: Notification[] = [
@@ -62,6 +68,8 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       notifications: DEMO_NOTIFICATIONS,
       sidebarCollapsed: false,
+      sidebarOrientation: "vertical",
+      theme: "light",
 
       login: (pin: string) => {
         const user = DEMO_USERS.find((u) => u.pin === pin);
@@ -97,14 +105,36 @@ export const useAuthStore = create<AuthState>()(
       setSidebarCollapsed: (v: boolean) => {
         set({ sidebarCollapsed: v });
       },
+
+      toggleSidebarOrientation: () => {
+        set((state) => ({
+          sidebarOrientation: state.sidebarOrientation === "vertical" ? "horizontal" : "vertical"
+        }));
+      },
+
+      setSidebarOrientation: (orientation: "vertical" | "horizontal") => {
+        set({ sidebarOrientation: orientation });
+      },
+
+      toggleTheme: () => {
+        set((state) => ({
+          theme: state.theme === "light" ? "dark" : "light"
+        }));
+      },
+
+      setTheme: (theme: "light" | "dark") => {
+        set({ theme });
+      },
     }),
     {
-      name: "ija-auth-storage",
+      name: "ija-auth-storage-v2",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
         sidebarCollapsed: state.sidebarCollapsed,
+        sidebarOrientation: state.sidebarOrientation,
+        theme: state.theme,
       }),
     }
   )

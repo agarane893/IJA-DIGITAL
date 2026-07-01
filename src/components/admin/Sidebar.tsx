@@ -16,13 +16,14 @@ import {
   ChevronLeft,
   ChevronRight,
   UtensilsCrossed,
-  QrCode,
+  TableProperties,
+  History,
 } from "lucide-react";
 import { useAuthStore } from "@/lib/useAuthStore";
 import { Permission, ROLE_LABELS, ROLE_COLORS, hasPermission } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
-interface NavItem {
+export interface NavItem {
   label: string;
   href: string;
   icon: React.ReactNode;
@@ -30,7 +31,7 @@ interface NavItem {
   badge?: string;
 }
 
-const NAV_ITEMS: NavItem[] = [
+export const NAV_ITEMS: NavItem[] = [
   {
     label: "Dashboard",
     href: "/dashboard",
@@ -44,23 +45,22 @@ const NAV_ITEMS: NavItem[] = [
     permission: "global_stats",
   },
   {
-    label: "Mes Tables",
+    label: "Gestion Commandes",
+    href: "/tables",
+    icon: <TableProperties className="w-6 h-6" />,
+    permission: "pos",
+  },
+  {
+    label: "All Commands",
     href: "/pos",
     icon: <ShoppingCart className="w-6 h-6" />,
     permission: "pos",
   },
   {
-    label: "Gestion Tables",
-    href: "/tables",
-    icon: <QrCode className="w-6 h-6" />,
-    permission: "pos",
-  },
-  {
-    label: "Commandes",
+    label: "Historique des Commandes",
     href: "/orders",
-    icon: <UtensilsCrossed className="w-6 h-6" />,
+    icon: <History className="w-6 h-6" />,
     permission: "orders",
-    badge: "5",
   },
   {
     label: "Gestion Menu",
@@ -97,9 +97,9 @@ const NAV_ITEMS: NavItem[] = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, sidebarCollapsed, toggleSidebar, logout } = useAuthStore();
+  const { user, sidebarCollapsed, sidebarOrientation, toggleSidebar, logout } = useAuthStore();
 
-  if (!user) return null;
+  if (!user || sidebarOrientation === "horizontal") return null;
 
   const allowedItems = NAV_ITEMS.filter((item) => hasPermission(user, item.permission));
   const roleColors = ROLE_COLORS[user.role];
@@ -129,12 +129,12 @@ export function AdminSidebar() {
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         className={cn(
           "fixed left-0 top-0 h-full z-40 flex flex-col",
-          "bg-zen-900/90 backdrop-blur-xl border-r border-white/5",
-          "shadow-2xl"
+          "bg-white/80 backdrop-blur-xl border-r border-zen-200/60",
+          "shadow-xl shadow-zen-200/40"
         )}
       >
         {/* Logo header */}
-        <div className="h-20 flex items-center justify-between px-5 border-b border-white/5 shrink-0">
+        <div className="h-20 flex items-center justify-between px-5 border-b border-zen-200/60 shrink-0">
           <AnimatePresence mode="wait">
             {!sidebarCollapsed ? (
               <motion.div
@@ -149,10 +149,10 @@ export function AdminSidebar() {
                   I
                 </div>
                 <div>
-                  <div className="font-heading font-black text-white text-base leading-tight">
+                  <div className="font-heading font-black text-zen-900 text-base leading-tight">
                     Ija Digital
                   </div>
-                  <div className="text-xs text-zen-400 font-semibold">
+                  <div className="text-xs text-zen-500 font-semibold">
                     Restaurant OS
                   </div>
                 </div>
@@ -174,7 +174,7 @@ export function AdminSidebar() {
           {!sidebarCollapsed && (
             <button
               onClick={toggleSidebar}
-              className="w-10 h-10 min-w-[40px] rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all shrink-0"
+              className="w-10 h-10 min-w-[40px] rounded-lg bg-zen-100 border border-zen-200 flex items-center justify-center text-zen-500 hover:text-zen-700 hover:bg-zen-200 transition-all shrink-0"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -185,7 +185,7 @@ export function AdminSidebar() {
         {sidebarCollapsed && (
           <button
             onClick={toggleSidebar}
-            className="mx-auto mt-4 w-10 h-10 min-w-[40px] rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
+            className="mx-auto mt-4 w-10 h-10 min-w-[40px] rounded-lg bg-zen-100 border border-zen-200 flex items-center justify-center text-zen-500 hover:text-zen-700 hover:bg-zen-200 transition-all"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -218,7 +218,7 @@ export function AdminSidebar() {
                   exit={{ opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <p className="text-sm font-bold text-white leading-tight truncate">
+                  <p className="text-sm font-bold text-zen-900 leading-tight truncate">
                     {user.name}
                   </p>
                   <p className={cn("text-xs font-semibold mt-0.5", roleColors.text)}>
@@ -243,8 +243,8 @@ export function AdminSidebar() {
                   className={cn(
                     "flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-all duration-150 cursor-pointer group relative min-h-[44px]",
                     isActive
-                      ? "bg-zen-500/15 text-zen-400 border border-zen-500/25"
-                      : "text-white/50 hover:text-white/90 hover:bg-white/5 border border-transparent"
+                      ? "bg-zen-500/10 text-zen-600 border border-zen-500/20"
+                      : "text-zen-700/70 hover:text-zen-900 hover:bg-zen-100/60 border border-transparent"
                   )}
                 >
                   {/* Active indicator */}
@@ -260,7 +260,7 @@ export function AdminSidebar() {
                     className={cn(
                       "shrink-0 transition-colors",
                       sidebarCollapsed ? "mx-auto" : "mr-4",
-                      isActive ? "text-zen-400" : "text-white/40 group-hover:text-white/70"
+                      isActive ? "text-zen-600" : "text-zen-400 group-hover:text-zen-700"
                     )}
                   >
                     {item.icon}
@@ -279,7 +279,7 @@ export function AdminSidebar() {
 
                   {/* Tooltip on collapsed */}
                   {sidebarCollapsed && (
-                    <div className="absolute left-full ml-3 px-3 py-2 bg-zen-800 border border-white/10 rounded-lg text-white text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-white border border-zen-200 rounded-lg text-zen-900 text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
                       {item.label}
                       {item.badge && (
                         <span className="ml-2 bg-zen-500 text-white text-xs px-1.5 rounded-full">
@@ -295,11 +295,11 @@ export function AdminSidebar() {
         </nav>
 
         {/* Logout */}
-        <div className="px-4 py-4 border-t border-white/5 shrink-0">
+        <div className="px-4 py-4 border-t border-zen-200/60 shrink-0">
           <button
             onClick={handleLogout}
             className={cn(
-              "w-full flex items-center rounded-xl px-4 py-3.5 text-base font-medium text-white/40 hover:text-red-400 hover:bg-red-500/8 transition-all border border-transparent hover:border-red-500/15 group min-h-[44px]"
+              "w-full flex items-center rounded-xl px-4 py-3.5 text-base font-medium text-zen-500 hover:text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-200 group min-h-[44px]"
             )}
           >
             <LogOut
@@ -311,7 +311,7 @@ export function AdminSidebar() {
             {!sidebarCollapsed && <span>Déconnexion</span>}
 
             {sidebarCollapsed && (
-              <div className="absolute left-full ml-3 px-3 py-2 bg-zen-800 border border-white/10 rounded-lg text-white text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
+              <div className="absolute left-full ml-3 px-3 py-2 bg-white border border-zen-200 rounded-lg text-zen-900 text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
                 Déconnexion
               </div>
             )}

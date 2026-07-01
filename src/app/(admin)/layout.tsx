@@ -14,12 +14,24 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
-  const { isAuthenticated, sidebarCollapsed } = useAuthStore();
+  const { isAuthenticated, sidebarCollapsed, sidebarOrientation, theme } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Update HTML class list for Tailwind darkMode class-strategy
+  useEffect(() => {
+    if (mounted) {
+      const root = window.document.documentElement;
+      if (theme === "dark") {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+    }
+  }, [mounted, theme]);
 
   useEffect(() => {
     if (mounted && !isAuthenticated) {
@@ -29,8 +41,8 @@ export default function AdminLayout({
 
   if (!mounted || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-zen-900 flex items-center justify-center relative">
-        <AmbientBackground variant="dark" />
+      <div className="min-h-screen bg-zen-50 dark:bg-zen-900 flex items-center justify-center relative">
+        <AmbientBackground variant={theme === "dark" ? "dark" : "light"} />
         <div className="flex flex-col items-center gap-4 relative z-10">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-zen-500 to-zen-400 flex items-center justify-center text-white font-black text-xl shadow-lg animate-pulse">
             I
@@ -49,17 +61,27 @@ export default function AdminLayout({
     );
   }
 
+  const isHorizontal = sidebarOrientation === "horizontal";
+
   return (
-    <div className="min-h-screen bg-zen-900 text-white font-sans relative">
-      <AmbientBackground variant="dark" />
-      {/* Sidebar */}
+    <div className={cn(
+      "min-h-screen font-sans relative transition-colors duration-300",
+      theme === "dark" ? "bg-zen-900 text-zen-100" : "bg-zen-50 text-zen-900"
+    )}>
+      <AmbientBackground variant={theme === "dark" ? "dark" : "light"} />
+      
+      {/* Sidebar / Navigation */}
       <AdminSidebar />
 
-      {/* Main content area - shifts based on sidebar width */}
+      {/* Main content area */}
       <div
         className={cn(
           "flex flex-col min-h-screen transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] relative z-10",
-          sidebarCollapsed ? "lg:ml-[72px]" : "lg:ml-[260px]"
+          isHorizontal 
+            ? "ml-0 pt-16" // Space for horizontal top navbar
+            : sidebarCollapsed 
+              ? "lg:ml-[72px]" 
+              : "lg:ml-[260px]"
         )}
       >
         <AdminHeader />

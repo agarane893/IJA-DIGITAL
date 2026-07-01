@@ -428,3 +428,9 @@ export function formatPrice(price: number): string {
 
 export const RESTAURANT_NAME = "Le Comptoir de Tunis";
 export const RESTAURANT_TAGLINE = "Saveurs authentiques de la Médina";
+export const RESTAURANT_LOCATION = "12, Rue de la Kasbah, Médina – Tunis 1008";
+export const RESTAURANT_MAPS_URL = "https://maps.google.com/?q=Medina+Tunis";
+export const RESTAURANT_DESCRIPTION =
+  "Bienvenue au Comptoir de Tunis — un espace chaleureux au cœur de la Médina, où la cuisine traditionnelle tunisienne rencontre une expérience moderne. Café, pâtisseries orientales, plats du terroir et bien plus vous attendent.";
+export const RESTAURANT_HOURS = "Lun – Sam : 07h00 – 23h00  ·  Dim : 08h00 – 22h00";
+export const RESTAURANT_PHONE = "+216 71 XXX XXX";
