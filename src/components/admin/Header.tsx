@@ -196,7 +196,7 @@ export function AdminHeader() {
           {/* Theme switcher */}
           <button
             onClick={toggleTheme}
-            className="w-9 h-9 rounded-xl bg-zen-100 dark:bg-zen-800 border border-zen-200 dark:border-zen-700 flex items-center justify-center text-zen-500 hover:text-zen-700 dark:text-zen-350 dark:hover:text-white hover:bg-zen-200 dark:hover:bg-zen-750 transition-all"
+            className="w-9 h-9 rounded-xl bg-zen-100 dark:bg-zen-800 border border-zen-200 dark:border-zen-700 flex items-center justify-center text-zen-500 hover:text-zen-700 dark:text-zen-300 dark:hover:text-white hover:bg-zen-200 dark:hover:bg-zen-750 transition-all"
             title={theme === "dark" ? "Mode clair" : "Mode sombre"}
           >
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -205,7 +205,7 @@ export function AdminHeader() {
           {/* Layout Orientation switcher */}
           <button
             onClick={toggleSidebarOrientation}
-            className="w-9 h-9 rounded-xl bg-zen-100 dark:bg-zen-800 border border-zen-200 dark:border-zen-700 flex items-center justify-center text-zen-500 hover:text-zen-700 dark:text-zen-350 dark:hover:text-white hover:bg-zen-200 dark:hover:bg-zen-750 transition-all"
+            className="w-9 h-9 rounded-xl bg-zen-100 dark:bg-zen-800 border border-zen-200 dark:border-zen-700 flex items-center justify-center text-zen-500 dark:text-zen-300 hover:text-zen-700 dark:hover:text-white hover:bg-zen-200 dark:hover:bg-zen-750 transition-all"
             title={isHorizontal ? "Menu latéral" : "Menu horizontal"}
           >
             {isHorizontal ? <Columns className="w-4 h-4" /> : <Layout className="w-4 h-4" />}

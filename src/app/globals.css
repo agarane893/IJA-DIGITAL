@@ -132,6 +132,34 @@ svg {
     animation: ambient-float-3 26s ease-in-out infinite;
   }
 
+  body:not(.dark) .text-white\/30 {
+    color: rgba(15, 23, 42, 0.36) !important;
+  }
+
+  body:not(.dark) .text-white\/40 {
+    color: rgba(15, 23, 42, 0.44) !important;
+  }
+
+  body:not(.dark) .text-white\/50 {
+    color: rgba(15, 23, 42, 0.54) !important;
+  }
+
+  body:not(.dark) .text-white\/60 {
+    color: rgba(15, 23, 42, 0.64) !important;
+  }
+
+  body:not(.dark) .border-white\/10 {
+    border-color: rgba(148, 163, 184, 0.24) !important;
+  }
+
+  body:not(.dark) .border-white\/5 {
+    border-color: rgba(148, 163, 184, 0.14) !important;
+  }
+
+  .dark .text-white\/30 {
+    color: rgba(255, 255, 255, 0.54) !important;
+  }
+
   .dark .text-white\/40 {
     color: rgba(255, 255, 255, 0.72) !important;
   }

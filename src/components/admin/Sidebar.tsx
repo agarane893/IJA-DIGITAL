@@ -123,8 +123,8 @@ export function AdminSidebar() {
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         className={cn(
           "fixed left-0 top-0 h-full z-40 flex flex-col",
-          "bg-white/80 backdrop-blur-xl border-r border-zen-200/60",
-          "shadow-xl shadow-zen-200/40"
+          "bg-white/90 dark:bg-[#0B1A12] backdrop-blur-xl border-r border-zen-200/60 dark:border-zen-800/95",
+          "shadow-xl shadow-zen-200/40 dark:shadow-black/30 text-zen-900 dark:text-zen-100"
         )}
       >
         {/* Logo header */}
@@ -143,10 +143,10 @@ export function AdminSidebar() {
                   I
                 </div>
                 <div>
-                  <div className="font-heading font-black text-zen-900 text-base leading-tight">
+                  <div className="font-heading font-black text-zen-900 dark:text-zen-100 text-base leading-tight">
                     Ija Digital
                   </div>
-                  <div className="text-xs text-zen-500 font-semibold">
+                  <div className="text-xs text-zen-500 dark:text-zen-400 font-semibold">
                     Restaurant OS
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export function AdminSidebar() {
           {!sidebarCollapsed && (
             <button
               onClick={toggleSidebar}
-              className="w-10 h-10 min-w-[40px] rounded-lg bg-zen-100 border border-zen-200 flex items-center justify-center text-zen-500 hover:text-zen-700 hover:bg-zen-200 transition-all shrink-0"
+              className="w-10 h-10 min-w-[40px] rounded-lg bg-zen-100 dark:bg-zen-800 border border-zen-200 dark:border-zen-700 flex items-center justify-center text-zen-500 dark:text-zen-300 hover:text-zen-700 dark:hover:text-white hover:bg-zen-200 dark:hover:bg-zen-750 transition-all shrink-0"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -179,7 +179,7 @@ export function AdminSidebar() {
         {sidebarCollapsed && (
           <button
             onClick={toggleSidebar}
-            className="mx-auto mt-4 w-10 h-10 min-w-[40px] rounded-lg bg-zen-100 border border-zen-200 flex items-center justify-center text-zen-500 hover:text-zen-700 hover:bg-zen-200 transition-all"
+            className="mx-auto mt-4 w-10 h-10 min-w-[40px] rounded-lg bg-zen-100 dark:bg-zen-800 border border-zen-200 dark:border-zen-700 flex items-center justify-center text-zen-500 dark:text-zen-300 hover:text-zen-700 dark:hover:text-white hover:bg-zen-200 dark:hover:bg-zen-750 transition-all"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -212,10 +212,10 @@ export function AdminSidebar() {
                   exit={{ opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <p className="text-sm font-bold text-zen-900 leading-tight truncate">
+                  <p className="text-sm font-bold text-zen-900 dark:text-zen-100 leading-tight truncate">
                     {user.name}
                   </p>
-                  <p className={cn("text-xs font-semibold mt-0.5", roleColors.text)}>
+                  <p className={cn("text-xs font-semibold mt-0.5 dark:text-zen-400", roleColors.text)}>
                     {ROLE_LABELS[user.role]}
                   </p>
                 </motion.div>
@@ -237,8 +237,8 @@ export function AdminSidebar() {
                   className={cn(
                     "flex items-center rounded-xl px-4 py-3.5 text-base font-medium transition-all duration-150 cursor-pointer group relative min-h-[44px]",
                     isActive
-                      ? "bg-zen-500/10 text-zen-600 border border-zen-500/20"
-                      : "text-zen-700/70 hover:text-zen-900 hover:bg-zen-100/60 border border-transparent"
+                      ? "bg-zen-500/10 dark:bg-zen-600/20 text-zen-600 dark:text-zen-200 border border-zen-500/20 dark:border-zen-500/30"
+                      : "text-zen-700/70 dark:text-zen-300/80 hover:text-zen-900 dark:hover:text-white hover:bg-zen-100/60 dark:hover:bg-zen-800/70 border border-transparent"
                   )}
                 >
                   {/* Active indicator */}
@@ -254,7 +254,9 @@ export function AdminSidebar() {
                     className={cn(
                       "shrink-0 transition-colors",
                       sidebarCollapsed ? "mx-auto" : "mr-4",
-                      isActive ? "text-zen-600" : "text-zen-400 group-hover:text-zen-700"
+                      isActive
+                        ? "text-zen-600 dark:text-zen-200"
+                        : "text-zen-400 dark:text-zen-400 group-hover:text-zen-700 dark:group-hover:text-white"
                     )}
                   >
                     {item.icon}
@@ -262,7 +264,16 @@ export function AdminSidebar() {
 
                   {!sidebarCollapsed && (
                     <>
-                      <span className="flex-1 truncate">{item.label}</span>
+                      <span
+                        className={cn(
+                          "flex-1 truncate",
+                          isActive
+                            ? "text-zen-600 dark:text-zen-200"
+                            : "text-zen-900 dark:text-zen-100"
+                        )}
+                      >
+                        {item.label}
+                      </span>
                       {item.badge && (
                         <span className="ml-auto bg-zen-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] text-center">
                           {item.badge}
@@ -273,7 +284,7 @@ export function AdminSidebar() {
 
                   {/* Tooltip on collapsed */}
                   {sidebarCollapsed && (
-                    <div className="absolute left-full ml-3 px-3 py-2 bg-white border border-zen-200 rounded-lg text-zen-900 text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-white dark:bg-zen-900 border border-zen-200 dark:border-zen-700 rounded-lg text-zen-900 dark:text-zen-100 text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
                       {item.label}
                       {item.badge && (
                         <span className="ml-2 bg-zen-500 text-white text-xs px-1.5 rounded-full">
@@ -289,11 +300,11 @@ export function AdminSidebar() {
         </nav>
 
         {/* Logout */}
-        <div className="px-4 py-4 border-t border-zen-200/60 shrink-0">
+        <div className="px-4 py-4 border-t border-zen-200/60 dark:border-zen-800/70 shrink-0">
           <button
             onClick={handleLogout}
             className={cn(
-              "w-full flex items-center rounded-xl px-4 py-3.5 text-base font-medium text-zen-500 hover:text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-200 group min-h-[44px]"
+              "w-full flex items-center rounded-xl px-4 py-3.5 text-base font-medium text-zen-500 dark:text-zen-300 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-600/10 transition-all border border-transparent hover:border-red-200 dark:hover:border-red-400 group min-h-[44px]"
             )}
           >
             <LogOut
@@ -305,7 +316,7 @@ export function AdminSidebar() {
             {!sidebarCollapsed && <span>Déconnexion</span>}
 
             {sidebarCollapsed && (
-              <div className="absolute left-full ml-3 px-3 py-2 bg-white border border-zen-200 rounded-lg text-zen-900 text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
+              <div className="absolute left-full ml-3 px-3 py-2 bg-white dark:bg-zen-900 border border-zen-200 dark:border-zen-700 rounded-lg text-zen-900 dark:text-zen-100 text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50">
                 Déconnexion
               </div>
             )}
