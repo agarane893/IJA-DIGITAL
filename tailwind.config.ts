@@ -50,17 +50,18 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // ── Monochrome palette (replaces green "zen") ──────────────────
         zen: {
-          50: '#F4F6F4', // Lightest sage background
-          100: '#E2E8E4', // Borders light
-          200: '#C2D1C5', // Muted borders
-          300: '#A1BAA7',
-          400: '#8FA986', // Light matcha gradient end
-          500: '#7C9A73', // Matcha Green Accent
-          600: '#5C7C63', // Deep Sage
-          700: '#3D5543',
-          800: '#1F2923', // Admin Card / Sidebar
-          900: '#161E1A', // Admin Deep Background
+          50:  '#F9F9F9', // Lightest background
+          100: '#F0F0F0', // Light borders / subtle bg
+          200: '#D8D8D8', // Muted borders
+          300: '#B0B0B0', // Placeholder / disabled
+          400: '#888888', // Secondary text
+          500: '#3A3A3A', // Primary accent (near-black)
+          600: '#222222', // Buttons / strong elements
+          700: '#161616', // Hover states
+          800: '#1A1A1A', // Admin card / sidebar (dark mode)
+          900: '#0D0D0D', // Admin deep background (dark mode)
         },
       },
       borderRadius: {

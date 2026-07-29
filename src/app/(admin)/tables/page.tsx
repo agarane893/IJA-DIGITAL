@@ -280,16 +280,11 @@ export default function TablesPage() {
     <div className="h-full flex flex-col p-4 md:p-6 max-w-7xl mx-auto space-y-6 text-zen-900">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-heading text-3xl font-black text-zen-900 flex items-center gap-3">
-            <LayoutDashboard className="w-8 h-8 text-zen-600" />
-            Gestion Commandes
-          </h1>
-          <p className="text-zen-600/60 mt-1 text-sm font-medium">
-            Réception, tables et caisse en temps réel
-          </p>
-        </div>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-heading text-3xl font-black text-zen-900 flex items-center gap-3">
+          <LayoutDashboard className="w-8 h-8 text-zen-600" />
+          Commandes
+        </h1>
 
         <div className="flex items-center gap-3">
           {readyCount > 0 && (
@@ -302,26 +297,12 @@ export default function TablesPage() {
             onClick={openAddTable}
             className="flex items-center gap-2 text-sm font-bold text-white bg-zen-600 hover:bg-zen-700 rounded-xl px-4 py-2.5 transition-all shadow-sm"
           >
-            <Plus className="w-4 h-4" /> Ajouter une table
+            <Plus className="w-4 h-4" /> Table
           </button>
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-2 text-xs font-bold">
-        {[
-          { dot: "bg-zen-400", color: "bg-zen-50 border-zen-200 text-zen-600", label: "Libre" },
-          { dot: "bg-amber-400", color: "bg-amber-50 border-amber-200 text-amber-700", label: "En cours" },
-          { dot: "bg-emerald-500 animate-pulse", color: "bg-emerald-50 border-emerald-200 text-emerald-700", label: "Prête" },
-          { dot: "bg-purple-500", color: "bg-purple-50 border-purple-200 text-purple-700", label: "À encaisser" },
-          { dot: "bg-blue-400", color: "bg-blue-50 border-blue-200 text-blue-700", label: "Payée" },
-        ].map((l) => (
-          <span key={l.label} className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg border", l.color)}>
-            <span className={cn("w-2 h-2 rounded-full shrink-0", l.dot)} />
-            {l.label}
-          </span>
-        ))}
-      </div>
+
 
       {/* Table Grid */}
       {tables.length === 0 ? (
@@ -799,13 +780,13 @@ export default function TablesPage() {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setCheckoutOrder(null)}
-                  className="flex-1 py-2.5 rounded-xl font-bold text-zen-700 bg-zen-100 hover:bg-zen-200 transition-colors text-sm"
+                  className="flex-1 py-3 rounded-xl font-bold text-zen-700 bg-zen-100 hover:bg-zen-200 transition-colors text-sm"
                 >
                   Retour
                 </button>
                 <button
                   onClick={() => handleMarkPaid(checkoutOrder.id, checkoutPaymentMethod)}
-                  className="flex-1 bg-purple-600 text-white py-2.5 rounded-xl font-bold hover:bg-purple-700 transition-colors text-sm shadow-lg shadow-purple-600/20"
+                  className="flex-1 bg-black text-white dark:bg-white dark:text-black py-3 rounded-xl font-black text-sm hover:opacity-90 transition-colors shadow-xl"
                 >
                   Confirmer l&apos;encaissement
                 </button>
@@ -1075,27 +1056,32 @@ function OrderCard({
 
       {/* Actions */}
       <div className="flex gap-2 pt-1">
-        {order.status !== "delivered" && order.status !== "rejected" && (
+        {["new", "confirmed"].includes(order.status) && (
           <button
             onClick={onAdvance}
-            className={cn(
-              "flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all",
-              order.status === "ready"
-                ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-600/20"
-                : "bg-zen-100 text-zen-700 hover:bg-zen-200"
-            )}
+            className="flex-1 py-2.5 rounded-xl text-xs font-black bg-blue-600 text-white hover:bg-blue-500 flex items-center justify-center gap-1.5 transition-all shadow-md"
           >
-            <ChefHat className="w-3.5 h-3.5" />
-            {nextLabel[order.status] || "Avancer"}
+            <ChefHat className="w-4 h-4" />
+            En préparation
           </button>
         )}
 
-        {order.status === "delivered" && !order.paid && (
+        {order.status === "cooking" && (
+          <button
+            onClick={onAdvance}
+            className="flex-1 py-2.5 rounded-xl text-xs font-black bg-emerald-600 text-white hover:bg-emerald-500 flex items-center justify-center gap-1.5 transition-all shadow-md"
+          >
+            <CheckCircle2 className="w-4 h-4" />
+            Prête
+          </button>
+        )}
+
+        {(order.status === "ready" || (order.status === "delivered" && !order.paid)) && (
           <button
             onClick={onPay}
-            className="flex-1 py-2 rounded-xl text-xs font-bold bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center gap-1.5 shadow-md shadow-purple-600/20"
+            className="flex-1 py-3 px-4 rounded-xl text-sm font-black bg-black text-white dark:bg-white dark:text-black hover:opacity-90 flex items-center justify-center gap-2 shadow-xl transition-all"
           >
-            <Receipt className="w-3.5 h-3.5" />
+            <Receipt className="w-4 h-4" />
             Encaisser
           </button>
         )}
@@ -1103,9 +1089,10 @@ function OrderCard({
         {order.status !== "rejected" && !order.paid && (
           <button
             onClick={onCancel}
-            className="py-2 px-3 rounded-xl text-xs font-bold bg-red-50 text-red-500 hover:bg-red-100 border border-red-100 transition-all"
+            className="py-2.5 px-3 rounded-xl text-xs font-bold bg-red-50 text-red-500 hover:bg-red-100 border border-red-100 transition-all shrink-0"
+            title="Annuler la commande"
           >
-            <XCircle className="w-3.5 h-3.5" />
+            <XCircle className="w-4 h-4" />
           </button>
         )}
       </div>
