@@ -83,6 +83,10 @@ export default function StocksPage() {
   } | null>(null);
   const [adjustReason, setAdjustReason] = useState("");
 
+  // Preset reasons for stock movements
+  const ADD_REASONS = ["Approvisionnement", "Inventaire", "Retour fournisseur", "Correction"];
+  const DEDUCT_REASONS = ["Utilisé en cuisine", "Périmé", "Casse", "Vendu", "Correction"];
+
   const [customAmounts, setCustomAmounts] = useState<Record<string, string>>({});
   const [selectedItem, setSelectedItem] = useState<StockItem | null>(null);
   const [showJourneysModal, setShowJourneysModal] = useState(false);
@@ -498,23 +502,43 @@ export default function StocksPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-zen-600 mb-2 uppercase tracking-wider">Raison du mouvement *</label>
-                <input type="text" placeholder="Ex: Approvisionnement, Casse, Commande..."
-                  value={adjustReason}
+                <p className="text-xs font-black text-zinc-600 mb-3 uppercase tracking-wider">Raison du mouvement</p>
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  {(adjustModal.type === "add" ? ADD_REASONS : DEDUCT_REASONS).map((reason) => (
+                    <button
+                      key={reason}
+                      type="button"
+                      onClick={() => setAdjustReason(reason)}
+                      className={cn(
+                        "py-3 px-3 rounded-2xl font-black text-sm border-2 transition-all text-center",
+                        adjustReason === reason
+                          ? adjustModal.type === "add"
+                            ? "bg-emerald-600 border-emerald-600 text-white"
+                            : "bg-red-600 border-red-600 text-white"
+                          : "bg-zinc-50 border-zinc-200 text-zinc-800 hover:border-zinc-400"
+                      )}
+                    >
+                      {reason}
+                    </button>
+                  ))}
+                </div>
+                {/* Custom reason fallback */}
+                <input type="text"
+                  placeholder="Autre raison..."
+                  value={ADD_REASONS.includes(adjustReason) || DEDUCT_REASONS.includes(adjustReason) ? "" : adjustReason}
                   onChange={(e) => setAdjustReason(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && confirmAdjust()}
-                  autoFocus
-                  className="w-full bg-zen-50 border border-zen-200 rounded-xl px-4 py-3 text-zen-900 placeholder:text-zen-400/60 focus:outline-none focus:ring-2 focus:ring-zen-500/30"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400/30"
                 />
               </div>
 
               <div className="flex gap-3 pt-1">
                 <button onClick={() => setAdjustModal(null)}
-                  className="flex-1 py-2.5 rounded-xl font-bold text-zen-700 bg-zen-100 hover:bg-zen-200 transition-colors">
+                  className="flex-1 py-3 rounded-xl font-bold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 transition-colors">
                   Annuler
                 </button>
                 <button onClick={confirmAdjust}
-                  className={cn("flex-1 py-2.5 rounded-xl font-bold text-white transition-colors shadow-sm",
+                  disabled={!adjustReason.trim()}
+                  className={cn("flex-1 py-3 rounded-xl font-black text-white transition-colors shadow-sm disabled:opacity-40",
                     adjustModal.type === "add" ? "bg-emerald-600 hover:bg-emerald-700" : "bg-red-600 hover:bg-red-700")}>
                   Confirmer
                 </button>

@@ -172,12 +172,12 @@ export default function ItemDetailPage() {
         {/* Item Comment */}
         <div className="space-y-3 pb-8">
           <h3 className="font-bold text-zen-900 text-sm uppercase tracking-wider">
-            Instructions spéciales
+            Commentaire
           </h3>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Ex: Sans sucre, allergie arachides..."
+            placeholder="Ex: Sans sucre, avec de la glace, sans sauce..."
             className="w-full bg-white border border-zen-200 rounded-2xl p-4 text-sm text-zen-900 placeholder:text-zen-900/30 outline-none focus:border-zen-500 focus:ring-1 focus:ring-zen-500 transition-all resize-none h-24"
           />
         </div>

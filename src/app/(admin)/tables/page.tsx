@@ -25,7 +25,7 @@ import { useTableStore, RestaurantTable } from "@/lib/useTableStore";
 import { useOrderStore } from "@/lib/useOrderStore";
 import { useAuthStore } from "@/lib/useAuthStore";
 import { PlacedOrder, CartItem } from "@/lib/useCartStore";
-import { MENU_ITEMS, MenuItem } from "@/lib/menuData";
+import { MENU_ITEMS, MenuItem, CATEGORIES } from "@/lib/menuData";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -93,12 +93,17 @@ export default function TablesPage() {
   const [cancellingOrder, setCancellingOrder] = useState<PlacedOrder | null>(null);
   const [cancelReason, setCancelReason] = useState("");
 
-  // --- Order builder: checklist state ---
+  // --- Order builder: POS tile grid & draft state ---
   const [showOrderForm, setShowOrderForm] = useState(false);
-  // { [menuItemId]: quantity }
-  const [checkedItems, setCheckedItems] = useState<Record<string, number>>({});
+  const [draftCartItems, setDraftCartItems] = useState<CartItem[]>([]);
   const [globalComment, setGlobalComment] = useState("");
-  const [orderSearch, setOrderSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("boissons");
+
+  // --- Beverage / Item Option Modal state for Server ---
+  const [optionItem, setOptionItem] = useState<MenuItem | null>(null);
+  const [optionChoices, setOptionChoices] = useState<Record<string, string>>({});
+  const [optionComment, setOptionComment] = useState("");
+  const [optionQty, setOptionQty] = useState(1);
 
   // --- Checkout / payment state ---
   const [checkoutOrder, setCheckoutOrder] = useState<PlacedOrder | null>(null);
@@ -107,34 +112,97 @@ export default function TablesPage() {
   // --- History collapsible state ---
   const [showHistory, setShowHistory] = useState(false);
 
-  const toggleCheck = (itemId: string) => {
-    setCheckedItems((prev) => {
-      if (prev[itemId]) {
-        const next = { ...prev };
-        delete next[itemId];
-        return next;
-      }
-      return { ...prev, [itemId]: 1 };
-    });
-  };
-
-  const setQty = (itemId: string, qty: number) => {
-    if (qty < 1) {
-      setCheckedItems((prev) => {
-        const next = { ...prev };
-        delete next[itemId];
-        return next;
+  // Add item from POS Carreaux Tile
+  const handleItemTileClick = (item: MenuItem) => {
+    if (item.options && item.options.length > 0) {
+      const defaultOpts: Record<string, string> = {};
+      item.options.forEach((opt) => {
+        defaultOpts[opt.label] = opt.choices[0].label;
       });
-      return;
+      setOptionChoices(defaultOpts);
+      setOptionComment("");
+      setOptionQty(1);
+      setOptionItem(item);
+    } else {
+      setDraftCartItems((prev) => {
+        const existingIndex = prev.findIndex(
+          (it) => it.menuItem.id === item.id && Object.keys(it.options || {}).length === 0 && !it.comment
+        );
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          const cur = updated[existingIndex];
+          const newQty = cur.quantity + 1;
+          updated[existingIndex] = {
+            ...cur,
+            quantity: newQty,
+            totalPrice: cur.unitPrice * newQty,
+          };
+          return updated;
+        } else {
+          return [
+            ...prev,
+            {
+              id: `${item.id}-${Date.now()}`,
+              menuItem: item,
+              quantity: 1,
+              options: {},
+              comment: "",
+              unitPrice: item.price,
+              totalPrice: item.price,
+            },
+          ];
+        }
+      });
     }
-    setCheckedItems((prev) => ({ ...prev, [itemId]: qty }));
   };
 
-  const checkedCount = Object.keys(checkedItems).length;
-  const checkedTotal = Object.entries(checkedItems).reduce((acc, [id, qty]) => {
-    const m = MENU_ITEMS.find((x) => x.id === id);
-    return acc + (m ? m.price * qty : 0);
-  }, 0);
+  const handleConfirmOptionItem = () => {
+    if (!optionItem) return;
+    let unit = optionItem.price;
+    if (optionItem.options) {
+      optionItem.options.forEach((opt) => {
+        const selectedLabel = optionChoices[opt.label];
+        const choice = opt.choices.find((c) => c.label === selectedLabel);
+        if (choice) unit += choice.priceDelta;
+      });
+    }
+
+    const newItem: CartItem = {
+      id: `${optionItem.id}-${Date.now()}`,
+      menuItem: optionItem,
+      quantity: optionQty,
+      options: { ...optionChoices },
+      comment: optionComment.trim(),
+      unitPrice: unit,
+      totalPrice: unit * optionQty,
+    };
+
+    setDraftCartItems((prev) => [...prev, newItem]);
+    toast.success(`${optionItem.name} ajouté !`);
+    setOptionItem(null);
+  };
+
+  const handleUpdateDraftQty = (cartItemId: string, delta: number) => {
+    setDraftCartItems((prev) =>
+      prev
+        .map((it) => {
+          if (it.id === cartItemId) {
+            const nQty = it.quantity + delta;
+            if (nQty <= 0) return null;
+            return { ...it, quantity: nQty, totalPrice: it.unitPrice * nQty };
+          }
+          return it;
+        })
+        .filter(Boolean) as CartItem[]
+    );
+  };
+
+  const handleRemoveDraftItem = (cartItemId: string) => {
+    setDraftCartItems((prev) => prev.filter((it) => it.id !== cartItemId));
+  };
+
+  const draftTotal = draftCartItems.reduce((acc, it) => acc + it.totalPrice, 0);
+  const draftCount = draftCartItems.reduce((acc, it) => acc + it.quantity, 0);
 
   const openAddTable = () => {
     setEditingTable(null);
@@ -210,43 +278,29 @@ export default function TablesPage() {
   // Submit the manual order
   const handleSubmitManualOrder = () => {
     if (!selectedTable) return;
-    if (checkedCount === 0) {
-      toast.error("Veuillez cocher au moins un article");
+    if (draftCartItems.length === 0) {
+      toast.error("Veuillez sélectionner au moins un article");
       return;
     }
-
-    const draftItems: CartItem[] = Object.entries(checkedItems).map(([id, qty]) => {
-      const menuItem = MENU_ITEMS.find((x) => x.id === id)!;
-      return {
-        id: `${id}::${Date.now()}`,
-        menuItem,
-        quantity: qty,
-        options: {},
-        comment: "",
-        unitPrice: menuItem.price,
-        totalPrice: menuItem.price * qty,
-      };
-    });
 
     const orderId = `CMD-${Math.floor(100 + Math.random() * 900)}`;
     const newOrder: PlacedOrder = {
       id: orderId,
       tableId: selectedTable.id,
-      items: draftItems,
-      total: checkedTotal,
-      paymentMethod: "cash", // default placeholder, set at checkout
+      items: draftCartItems,
+      total: draftTotal,
+      paymentMethod: "cash",
       globalComment,
       status: "new",
       createdAt: new Date().toISOString(),
     };
 
     addOrder(newOrder);
-    toast.success(`Commande ${orderId} créée — ${draftItems.length} article(s)`);
+    toast.success(`Commande ${orderId} créée — ${draftCartItems.length} article(s)`);
 
     // Reset
-    setCheckedItems({});
+    setDraftCartItems([]);
     setGlobalComment("");
-    setOrderSearch("");
     setShowOrderForm(false);
   };
 
@@ -335,7 +389,7 @@ export default function TablesPage() {
                   onSelect={() => {
                     setSelectedTable(table);
                     setShowOrderForm(false);
-                    setCheckedItems({});
+                    setDraftCartItems([]);
                     setOrderSearch("");
                   }}
                   onEdit={() => openEditTable(table)}
@@ -376,7 +430,7 @@ export default function TablesPage() {
                   <button
                     onClick={() => {
                       setShowOrderForm(!showOrderForm);
-                      setCheckedItems({});
+                      setDraftCartItems([]);
                       setOrderSearch("");
                     }}
                     className="text-xs font-bold text-white bg-zen-600 hover:bg-zen-700 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
@@ -394,195 +448,123 @@ export default function TablesPage() {
 
               <div className="flex-1 overflow-y-auto">
                 {showOrderForm ? (
-                  /* ─── CHECKLIST ORDER FORM ─── */
-                  <div className="flex flex-col h-full">
-                    {/* Search bar */}
-                    <div className="px-4 pt-4 pb-2 border-b border-zen-100">
-                      <div className="relative">
-                        <input
-                          type="text"
-                          value={orderSearch}
-                          onChange={(e) => setOrderSearch(e.target.value)}
-                          placeholder="Rechercher un article..."
-                          className="w-full bg-zen-50 border border-zen-200 rounded-xl pl-9 pr-4 py-2 text-sm text-zen-900 focus:outline-none focus:ring-2 focus:ring-zen-500/20"
-                        />
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zen-400 text-base">🔍</span>
-                      </div>
-                    </div>                    {/* Selected items quick review banner */}
-                    {checkedCount > 0 && (
-                      <div className="px-4 py-2.5 bg-emerald-50/70 border-b border-emerald-100">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[10px] font-black text-emerald-800 uppercase tracking-widest flex items-center gap-1">
-                            <span>Articles sélectionnés ({checkedCount})</span>
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => setCheckedItems({})}
-                            className="text-red-500 hover:text-red-700 font-bold text-[10px]"
-                          >
-                            Tout effacer
-                          </button>
-                        </div>
-                        <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pb-0.5">
-                          {Object.entries(checkedItems).map(([id, qty]) => {
-                            const item = MENU_ITEMS.find((x) => x.id === id);
-                            if (!item) return null;
-                            return (
-                              <div
-                                key={id}
-                                className="flex items-center gap-1.5 bg-white border border-emerald-200/50 rounded-lg pl-2 pr-1 py-0.5 text-xs shadow-sm"
-                              >
-                                <span className="font-bold text-zen-900">{qty}x</span>
-                                <span className="text-zen-700">{item.name}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => toggleCheck(id)}
-                                  className="w-4 h-4 rounded-md hover:bg-red-50 flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors"
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
+                  <div className="flex flex-col" style={{height: '80vh'}}>
 
-                    {/* Checklist grouped by category */}
-                    <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 max-h-[40vh]">
-                      {Array.from(new Set(MENU_ITEMS.map((m) => m.categoryId))).map((catId) => {
-                        const catItems = MENU_ITEMS.filter(
-                          (m) =>
-                            m.categoryId === catId &&
-                            m.available &&
-                            (orderSearch === "" ||
-                              m.name.toLowerCase().includes(orderSearch.toLowerCase()))
-                        );
-                        if (catItems.length === 0) return null;
-                        return (
-                          <div key={catId}>
-                            <p className="text-[10px] font-black text-zen-400 uppercase tracking-widest mb-2">
-                              {catId}
-                            </p>
-                            <div className="space-y-1.5">
-                              {catItems.map((item) => {
-                                const isChecked = !!checkedItems[item.id];
-                                const qty = checkedItems[item.id] ?? 1;
-                                return (
-                                  <div
-                                    key={item.id}
-                                    className={cn(
-                                      "flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all cursor-pointer select-none",
-                                      isChecked
-                                        ? "bg-zen-600/5 border-zen-600/30 font-bold"
-                                        : "bg-white border-zen-100 hover:border-zen-300"
-                                    )}
-                                    onClick={() => toggleCheck(item.id)}
-                                  >
-                                    {/* Checkbox */}
-                                    <div
-                                      className={cn(
-                                        "w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all",
-                                        isChecked
-                                          ? "bg-zen-600 border-zen-600"
-                                          : "border-zen-300 bg-white"
-                                      )}
-                                    >
-                                      {isChecked && (
-                                        <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
-                                          <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                      )}
-                                    </div>
-
-                                    {/* Emoji */}
-                                    <span className="text-xl shrink-0">{item.emoji}</span>
-
-                                    {/* Name + price */}
-                                    <div className="flex-1 min-w-0">
-                                      <p className={cn("text-sm truncate", isChecked ? "text-zen-900" : "text-zen-700")}>
-                                        {item.name}
-                                      </p>
-                                      <p className="text-[11px] text-zen-500 font-semibold">
-                                        {formatPrice(item.price)}
-                                      </p>
-                                    </div>
-
-                                    {/* Qty stepper (only when checked) */}
-                                    {isChecked && (
-                                      <div
-                                        className="flex items-center gap-1 shrink-0"
-                                        onClick={(e) => e.stopPropagation()}
-                                      >
-                                        <button
-                                          type="button"
-                                          onClick={() => setQty(item.id, qty - 1)}
-                                          className="w-7 h-7 rounded-lg bg-zen-100 hover:bg-zen-200 flex items-center justify-center text-zen-700 transition-colors"
-                                        >
-                                          <Minus className="w-3 h-3" />
-                                        </button>
-                                        <span className="w-5 text-center font-black text-sm text-zen-900">{qty}</span>
-                                        <button
-                                          type="button"
-                                          onClick={() => setQty(item.id, qty + 1)}
-                                          className="w-7 h-7 rounded-lg bg-zen-100 hover:bg-zen-200 flex items-center justify-center text-zen-700 transition-colors"
-                                        >
-                                          <Plus className="w-3 h-3" />
-                                        </button>
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })}
+                    {/* ── CATEGORY TABS ── big, easy to tap */}
+                    <div className="flex overflow-x-auto border-b border-zinc-200 bg-white shrink-0">
+                      {CATEGORIES.map((cat) => (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => setSelectedCategory(cat.id)}
+                          className={cn(
+                            "flex flex-col items-center justify-center gap-1 px-5 py-3 shrink-0 border-b-[3px] transition-all font-black text-sm",
+                            selectedCategory === cat.id
+                              ? "border-zinc-900 text-zinc-900 bg-zinc-50"
+                              : "border-transparent text-zinc-400 hover:text-zinc-700"
+                          )}
+                        >
+                          <span className="text-2xl">{cat.emoji}</span>
+                          <span className="text-[11px]">{cat.label}</span>
+                        </button>
+                      ))}
                     </div>
 
-                    {/* Sticky footer */}
-                    <div className="border-t border-zen-100 bg-zen-50 px-4 pt-3 pb-4 space-y-3">
-                      {/* Summary */}
-                      {checkedCount > 0 && (
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-zen-500 font-semibold">
-                            {checkedCount} article{checkedCount > 1 ? "s" : ""} sélectionné{checkedCount > 1 ? "s" : ""}
-                          </span>
-                          <span className="font-black text-zen-900">{formatPrice(checkedTotal)}</span>
+                    {/* ── ITEM TILES ── big 2-col grid */}
+                    <div className="flex-1 overflow-y-auto p-3 bg-zinc-100">
+                      <div className="grid grid-cols-2 gap-3">
+                        {MENU_ITEMS.filter((item) =>
+                          item.available && item.categoryId === selectedCategory
+                        ).map((item) => {
+                          const qty = draftCartItems
+                            .filter((it) => it.menuItem.id === item.id)
+                            .reduce((s, it) => s + it.quantity, 0);
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => handleItemTileClick(item)}
+                              className={cn(
+                                "relative flex flex-col items-center justify-center gap-2 rounded-2xl p-4 border-2 active:scale-95 transition-all text-center",
+                                qty > 0
+                                  ? "bg-zinc-900 border-zinc-900 text-white shadow-lg"
+                                  : "bg-white border-zinc-200 text-zinc-900 hover:border-zinc-400"
+                              )}
+                            >
+                              {qty > 0 && (
+                                <span className="absolute -top-2.5 -right-2.5 bg-amber-400 text-zinc-900 font-black text-sm w-8 h-8 rounded-full flex items-center justify-center shadow-md">
+                                  {qty}
+                                </span>
+                              )}
+                              <span className="text-5xl">{item.emoji}</span>
+                              <span className="font-black text-base leading-tight">{item.name}</span>
+                              <span className={cn(
+                                "font-black text-lg",
+                                qty > 0 ? "text-amber-300" : "text-zinc-500"
+                              )}>
+                                {formatPrice(item.price)}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* ── CART SUMMARY + VALIDATE ── */}
+                    <div className="bg-white border-t-2 border-zinc-200 shrink-0">
+                      {/* Items in cart - compact list */}
+                      {draftCartItems.length > 0 && (
+                        <div className="px-4 pt-3 pb-1 max-h-36 overflow-y-auto space-y-1.5">
+                          {draftCartItems.map((cartIt) => (
+                            <div key={cartIt.id} className="flex items-center justify-between bg-zinc-50 rounded-xl px-3 py-2">
+                              <div className="flex-1 min-w-0">
+                                <span className="font-black text-zinc-900 text-sm">{cartIt.quantity}× {cartIt.menuItem.name}</span>
+                                {cartIt.options && Object.keys(cartIt.options).length > 0 && (
+                                  <p className="text-xs text-zinc-500">{Object.values(cartIt.options).join(" · ")}</p>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className="font-black text-zinc-900 text-sm">{formatPrice(cartIt.totalPrice)}</span>
+                                <button type="button" onClick={() => handleUpdateDraftQty(cartIt.id, -1)}
+                                  className="w-7 h-7 rounded-lg bg-zinc-200 flex items-center justify-center font-black text-zinc-700 text-base hover:bg-zinc-300">−</button>
+                                <button type="button" onClick={() => handleUpdateDraftQty(cartIt.id, 1)}
+                                  className="w-7 h-7 rounded-lg bg-zinc-200 flex items-center justify-center font-black text-zinc-700 text-base hover:bg-zinc-300">+</button>
+                                <button type="button" onClick={() => handleRemoveDraftItem(cartIt.id)}
+                                  className="w-7 h-7 rounded-lg bg-red-100 text-red-500 flex items-center justify-center font-black text-base hover:bg-red-200">✕</button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       )}
 
-                      {/* Global comment */}
-                      <input
-                        type="text"
-                        value={globalComment}
-                        onChange={(e) => setGlobalComment(e.target.value)}
-                                                className="w-full bg-white border border-zen-200 rounded-xl px-3 py-2 text-sm text-zen-900 focus:outline-none focus:ring-2 focus:ring-zen-500/20"
-                      />
-
-                      {/* Actions */}
-                      <div className="flex gap-3">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowOrderForm(false);
-                            setCheckedItems({});
-                            setOrderSearch("");
-                          }}
-                          className="flex-1 py-2.5 rounded-xl font-bold text-zen-700 bg-white border border-zen-200 hover:bg-zen-100 transition-colors text-sm"
-                        >
-                          Annuler
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleSubmitManualOrder}
-                          disabled={checkedCount === 0}
-                          className="flex-1 bg-zen-600 disabled:opacity-40 text-white py-2.5 rounded-xl font-bold hover:bg-zen-700 transition-colors text-sm shadow-sm"
-                        >
-                          Valider {checkedCount > 0 ? `(${formatPrice(checkedTotal)})` : ""}
-                        </button>
+                      {/* Commentaire global + boutons */}
+                      <div className="p-3 space-y-2">
+                        <input
+                          type="text"
+                          value={globalComment}
+                          onChange={(e) => setGlobalComment(e.target.value)}
+                          placeholder="💬 Commentaire (ex: allergie, sans sauce...)"
+                          className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400/30"
+                        />
+                        <div className="flex gap-2">
+                          <button type="button"
+                            onClick={() => { setShowOrderForm(false); setDraftCartItems([]); }}
+                            className="w-16 py-4 rounded-xl font-bold text-zinc-500 bg-zinc-100 hover:bg-zinc-200 transition-colors text-sm">
+                            ✕
+                          </button>
+                          <button type="button"
+                            onClick={handleSubmitManualOrder}
+                            disabled={draftCartItems.length === 0}
+                            className="flex-1 bg-zinc-900 disabled:opacity-30 text-white py-4 rounded-xl font-black text-lg hover:bg-black transition-colors shadow-md flex items-center justify-center gap-3">
+                            <span>VALIDER</span>
+                            {draftCartItems.length > 0 && (
+                              <span className="bg-white/20 px-3 py-1 rounded-lg text-base">{formatPrice(draftTotal)}</span>
+                            )}
+                          </button>
+                        </div>
                       </div>
                     </div>
+
                   </div>
                 ) : (
                   <>
@@ -863,6 +845,104 @@ export default function TablesPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* ─── OPTION MODAL (SIMPLE, GRAND, LISIBLE) ───────────── */}
+      <AnimatePresence>
+        {optionItem && (
+          <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70">
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 60 }}
+              className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-sm shadow-2xl overflow-hidden"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 bg-zinc-900 text-white">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">{optionItem.emoji}</span>
+                  <div>
+                    <p className="font-black text-xl leading-tight">{optionItem.name}</p>
+                    <p className="text-amber-300 font-black text-base">{formatPrice(optionItem.price)}</p>
+                  </div>
+                </div>
+                <button type="button" onClick={() => setOptionItem(null)}
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-5 space-y-5">
+                {/* Option Groups — big buttons */}
+                {optionItem.options?.map((opt) => (
+                  <div key={opt.label}>
+                    <p className="font-black text-base text-zinc-700 mb-2">{opt.label}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {opt.choices.map((choice) => {
+                        const isSelected = optionChoices[opt.label] === choice.label;
+                        return (
+                          <button key={choice.id} type="button"
+                            onClick={() => setOptionChoices((prev) => ({ ...prev, [opt.label]: choice.label }))}
+                            className={cn(
+                              "py-3 px-4 rounded-2xl font-black text-sm border-2 transition-all text-left",
+                              isSelected
+                                ? "bg-zinc-900 border-zinc-900 text-white"
+                                : "bg-zinc-50 border-zinc-200 text-zinc-800 hover:border-zinc-400"
+                            )}
+                          >
+                            <span className="block">{choice.label}</span>
+                            {choice.priceDelta > 0 && (
+                              <span className={cn("text-xs font-black", isSelected ? "text-amber-300" : "text-zinc-500")}>
+                                +{formatPrice(choice.priceDelta)}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Commentaire */}
+                <div>
+                  <p className="font-black text-base text-zinc-700 mb-2">Commentaire</p>
+                  <input type="text" value={optionComment}
+                    onChange={(e) => setOptionComment(e.target.value)}
+                    placeholder="Ex: sans sucre, avec glace..."
+                    className="w-full bg-zinc-50 border-2 border-zinc-200 rounded-2xl px-4 py-3 text-base font-medium text-zinc-900 focus:outline-none focus:border-zinc-400"
+                  />
+                </div>
+
+                {/* Quantité */}
+                <div className="flex items-center justify-between">
+                  <p className="font-black text-base text-zinc-700">Quantité</p>
+                  <div className="flex items-center gap-3">
+                    <button type="button" onClick={() => setOptionQty(Math.max(1, optionQty - 1))}
+                      className="w-12 h-12 rounded-2xl bg-zinc-100 border-2 border-zinc-200 font-black text-zinc-900 text-2xl flex items-center justify-center hover:bg-zinc-200">−</button>
+                    <span className="w-10 text-center font-black text-2xl text-zinc-900">{optionQty}</span>
+                    <button type="button" onClick={() => setOptionQty(optionQty + 1)}
+                      className="w-12 h-12 rounded-2xl bg-zinc-100 border-2 border-zinc-200 font-black text-zinc-900 text-2xl flex items-center justify-center hover:bg-zinc-200">+</button>
+                  </div>
+                </div>
+
+                {/* Bouton confirmer */}
+                <button type="button" onClick={handleConfirmOptionItem}
+                  className="w-full bg-zinc-900 text-white font-black py-4 rounded-2xl text-lg hover:bg-black transition-colors shadow-lg flex items-center justify-center gap-3">
+                  <span>Ajouter</span>
+                  <span className="bg-white/20 px-3 py-1 rounded-xl text-base">
+                    {formatPrice(
+                      (optionItem.price + (optionItem.options?.reduce((sum, opt) => {
+                        const sel = optionChoices[opt.label];
+                        const choice = opt.choices.find((c) => c.label === sel);
+                        return sum + (choice?.priceDelta || 0);
+                      }, 0) || 0)) * optionQty
+                    )}
+                  </span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -1006,33 +1086,42 @@ function OrderCard({
           : "bg-white border-zen-200"
       )}
     >
-      {/* Top row */}
+      {/* Top row — no CMD ID shown to staff */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-black text-zen-900">{order.id}</span>
-          <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-lg border", STATUS_COLOR[order.status])}>
-            {STATUS_LABEL[order.status]}
-          </span>
-        </div>
-        <div className="flex items-center gap-1 text-[10px] text-zen-400">
+        <span className={cn("text-xs font-black px-3 py-1 rounded-lg border", STATUS_COLOR[order.status])}>
+          {STATUS_LABEL[order.status]}
+        </span>
+        <div className="flex items-center gap-1 text-[10px] text-zinc-400">
           <Clock className="w-3 h-3" />
           {formatTime(order.createdAt)}
         </div>
       </div>
 
       {/* Items */}
-      <div className="space-y-1">
+      <div className="space-y-2 py-1">
         {order.items?.map((item, i) => (
-          <div key={i} className="flex items-center justify-between text-xs text-zen-700">
-            <span className="font-medium">
-              {item.quantity}× {item.menuItem?.name || "Article"}
-            </span>
-            <span className="font-bold text-zen-600">{formatPrice(item.totalPrice)}</span>
+          <div key={i} className="text-xs text-zen-800 space-y-0.5 border-b border-zen-100/60 pb-1 last:border-0">
+            <div className="flex items-center justify-between font-bold">
+              <span className="text-zen-900 font-extrabold">
+                {item.quantity}× {item.menuItem?.name || "Article"}
+              </span>
+              <span className="text-zen-700 font-black">{formatPrice(item.totalPrice)}</span>
+            </div>
+            {item.options && Object.keys(item.options).length > 0 && (
+              <p className="text-[11px] text-zen-500 font-semibold pl-2">
+                • {Object.entries(item.options).map(([k, v]) => `${v}`).join(", ")}
+              </p>
+            )}
+            {item.comment && (
+              <p className="text-[10px] text-amber-800 bg-amber-50 border border-amber-200/60 rounded px-1.5 py-0.5 font-bold pl-2 inline-block">
+                💬 Commentaire : {item.comment}
+              </p>
+            )}
           </div>
         ))}
         {order.globalComment && (
-          <p className="text-[10px] text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-2 py-1 mt-1 font-medium">
-            Note : {order.globalComment}
+          <p className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1 mt-1 font-black">
+            📝 Commentaire commande : {order.globalComment}
           </p>
         )}
       </div>
